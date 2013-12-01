@@ -1,5 +1,6 @@
 <?php
 
+include("geshi.php");
 define("XRL_MACRO", 0);
 define("XRL_FUNCTION", 1);
 define("XRL_PROCEDURE", 2);
@@ -88,7 +89,9 @@ function xraylib_enable($lang) {
 	elseif ($lang == "PHP"){
 		$rv = "include(\"xraylib.php\");";
 	}
-	return $rv;
+	$geshi = new GeSHi($rv, strtolower($lang));
+	$rv2 = $geshi->parse_code();
+	return $rv2;
 }
 
 function stringify($string, $lang){

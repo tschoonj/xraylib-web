@@ -10,7 +10,6 @@
 <?php
 include("xraylib.php");
 include("xraylib_aux.php");
-include("geshi.php");
 //error_reporting(E_WARNING);
 //init
 $xrlFunction="LineEnergy";
@@ -21,7 +20,16 @@ $Energy="10.0";
 $Theta=1.5707964;
 $Phi=3.14159;
 $result="";
-$command="";
+$commandC="";
+$commandFortran="";
+$commandPerl="";
+$commandIDL="";
+$commandPython="";
+$commandJava="";
+$commandCsharp="";
+$commandLua="";
+$commandRuby="";
+$commandPHP="";
 $unit="";
 $ElementStyle="display:block";
 $LinetypeStyle="display:block";
@@ -30,6 +38,30 @@ $EnergyStyle="display:none";
 $ThetaStyle="display:none";
 $PhiStyle="display:none";
 $Language="C";
+$codeExampleStyle="display:none";
+$codeExampleCStyle="display:block";
+$codeExampleFortranStyle="display:none";
+$codeExamplePerlStyle="display:none";
+$codeExampleIDLStyle="display:none";
+$codeExamplePythonStyle="display:none";
+$codeExampleJavaStyle="display:none";
+$codeExampleCsharpStyle="display:none";
+$codeExampleLuaStyle="display:none";
+$codeExampleRubyStyle="display:none";
+$codeExamplePHPStyle="display:none";
+
+$includeSupportCStyle="display:block";
+$includeSupportFortranStyle="display:none";
+$includeSupportPerlStyle="display:none";
+$includeSupportIDLStyle="display:none";
+$includeSupportPythonStyle="display:none";
+$includeSupportJavaStyle="display:none";
+$includeSupportCsharpStyle="display:none";
+$includeSupportLuaStyle="display:none";
+$includeSupportRubyStyle="display:none";
+$includeSupportPHPStyle="display:none";
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "GET"){
 if (isset($_GET["Element"])) {
@@ -46,6 +78,69 @@ if (isset($_GET["xrlFunction"])) {
 }
 if (isset($_GET["Language"])) {
 	$Language=$_GET['Language'];
+	$codeExampleCStyle="display:none";
+	$codeExampleFortranStyle="display:none";
+	$codeExamplePerlStyle="display:none";
+	$codeExampleIDLStyle="display:none";
+	$codeExamplePythonStyle="display:none";
+	$codeExampleJavaStyle="display:none";
+	$codeExampleCsharpStyle="display:none";
+	$codeExampleLuaStyle="display:none";
+	$codeExampleRubyStyle="display:none";
+	$codeExamplePHPStyle="display:none";
+	$includeSupportCStyle="display:none";
+	$includeSupportFortranStyle="display:none";
+	$includeSupportPerlStyle="display:none";
+	$includeSupportIDLStyle="display:none";
+	$includeSupportPythonStyle="display:none";
+	$includeSupportJavaStyle="display:none";
+	$includeSupportCsharpStyle="display:none";
+	$includeSupportLuaStyle="display:none";
+	$includeSupportRubyStyle="display:none";
+	$includeSupportPHPStyle="display:none";
+
+	switch ($Language) {
+		case "C":
+			$codeExampleCStyle="display:block";
+			$includeSupportCStyle="display:block";
+			break;
+		case "Fortran":
+			$codeExampleFortranStyle="display:block";
+			$includeSupportFortranStyle="display:block";
+			break;
+		case "Perl":
+			$codeExamplePerlStyle="display:block";
+			$includeSupportPerlStyle="display:block";
+			break;
+		case "IDL":
+			$codeExampleIDLStyle="display:block";
+			$includeSupportIDLStyle="display:block";
+			break;
+		case "Python":
+			$codeExamplePythonStyle="display:block";
+			$includeSupportPythonStyle="display:block";
+			break;
+		case "Java":
+			$codeExampleJavaStyle="display:block";
+			$includeSupportJavaStyle="display:block";
+			break;
+		case "Csharp":
+			$codeExampleCsharpStyle="display:block";
+			$includeSupportCsharpStyle="display:block";
+			break;
+		case "Lua":
+			$codeExampleLuaStyle="display:block";
+			$includeSupportLuaStyle="display:block";
+			break;
+		case "Ruby":
+			$codeExampleRubyStyle="display:block";
+			$includeSupportRubyStyle="display:block";
+			break;
+		case "PHP":
+			$codeExamplePHPStyle="display:block";
+			$includeSupportPHPStyle="display:block";
+			break;
+	}
 }
 if (isset($_GET["Energy"])) {
 	$Energy=$_GET['Energy'];
@@ -71,11 +166,28 @@ if (isset($_GET['xrlFunction']) && $xrlFunction == "LineEnergy") {
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $realLinename);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Element.", ".expand_entity($Linename, XRL_MACRO, $Language).")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "C").")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Fortran").")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Perl").")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "IDL").")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Python").")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Java").")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Csharp").")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Lua").")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Ruby").")";
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realLinename);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $Language)."(".stringify($Element,$Language)."), ".expand_entity($Linename, XRL_MACRO, $Language).")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".expand_entity($Linename, XRL_MACRO, "C").")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".expand_entity($Linename, XRL_MACRO, "Fortran").")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".expand_entity($Linename, XRL_MACRO, "Perl").")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".expand_entity($Linename, XRL_MACRO, "IDL").")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".expand_entity($Linename, XRL_MACRO, "Python").")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".expand_entity($Linename, XRL_MACRO, "Java").")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".expand_entity($Linename, XRL_MACRO, "Csharp").")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".expand_entity($Linename, XRL_MACRO, "Lua").")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".expand_entity($Linename, XRL_MACRO, "Ruby").")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".expand_entity($Linename, XRL_MACRO, "PHP").")";
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -84,6 +196,7 @@ if (isset($_GET['xrlFunction']) && $xrlFunction == "LineEnergy") {
 	display_none_all();
 	$ElementStyle="display:block";
 	$LinetypeStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && $xrlFunction == "EdgeEnergy") {
 	if (!is_numeric($Shell)) {
@@ -100,11 +213,29 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "EdgeEnergy") {
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $realShell);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $Language).")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "C").")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Fortran").")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Perl").")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "IDL").")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Python").")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Java").")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Csharp").")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Lua").")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Ruby").")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "PHP").")";
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $Language)."(".stringify($Element,$Language)."), ".expand_entity($Shell, XRL_MACRO, $Language).")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".expand_entity($Shell, XRL_MACRO, "C").")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".expand_entity($Shell, XRL_MACRO, "Fortran").")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".expand_entity($Shell, XRL_MACRO, "Perl").")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".expand_entity($Shell, XRL_MACRO, "IDL").")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".expand_entity($Shell, XRL_MACRO, "Python").")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".expand_entity($Shell, XRL_MACRO, "Java").")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".expand_entity($Shell, XRL_MACRO, "Csharp").")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".expand_entity($Shell, XRL_MACRO, "Lua").")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".expand_entity($Shell, XRL_MACRO, "Ruby").")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".expand_entity($Shell, XRL_MACRO, "PHP").")";
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -113,15 +244,34 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "EdgeEnergy") {
 	display_none_all();
 	$ElementStyle="display:block";
 	$ShellStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "AtomicWeight" || $xrlFunction == "ElementDensity")) {
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Element.")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.")";
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element));
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $Language)."(".stringify($Element,$Language)."))";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."))";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."))";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."))";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."))";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."))";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."))";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."))";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."))";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."))";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."))";
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -134,6 +284,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "AtomicWeight" || $xrlFu
 	}
 	display_none_all();
 	$ElementStyle="display:block";
+	$codeExampleStyle="display:block";
 
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFunction == "CS_Photo" ||
@@ -148,11 +299,29 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $Energy);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Element.", ".$Energy.")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".$Energy.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".$Energy.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".$Energy.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".$Energy.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".$Energy.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".$Energy.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".$Energy.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".$Energy.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".$Energy.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".$Energy.")";
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $Language)."(".stringify($Element,$Language)."), ".$Energy.")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$Energy.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$Energy.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$Energy.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$Energy.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$Energy.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$Energy.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$Energy.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$Energy.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$Energy.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$Energy.")";
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -166,6 +335,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 	display_none_all();
 	$ElementStyle="display:block";
 	$EnergyStyle="display:block";
+	$codeExampleStyle="display:block";
 
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
@@ -174,13 +344,23 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
 		goto error;
 	}
 	$result = $xrlFunction($Energy);
-	$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Energy.")";
+	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Energy.")";
+	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Energy.")";
+	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Energy.")";
+	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Energy.")";
+	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Energy.")";
+	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Energy.")";
+	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Energy.")";
+	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Energy.")";
+	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Energy.")";
+	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Energy.")";
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
 	$unit=" cm<sup>2</sup>/g";
 	display_none_all();
 	$EnergyStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
 	if (!is_numeric($Theta) || $Theta < 0.0 || $Theta > PI) {
@@ -188,13 +368,23 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
 		goto error;
 	}
 	$result = $xrlFunction($Theta);
-	$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Theta.")";
+	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Theta.")";
+	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Theta.")";
+	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Theta.")";
+	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Theta.")";
+	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Theta.")";
+	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Theta.")";
+	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Theta.")";
+	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Theta.")";
+	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Theta.")";
+	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Theta.")";
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
 	$unit=" cm<sup>2</sup>/g/sterad";
 	display_none_all();
 	$ThetaStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
@@ -206,7 +396,16 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN")) {
 		goto error;
 	}
 	$result = $xrlFunction($Energy, $Theta);
-	$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Energy.", ".$Theta.")";
+	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Energy.", ".$Theta.")";
+	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Energy.", ".$Theta.")";
+	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Energy.", ".$Theta.")";
+	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Energy.", ".$Theta.")";
+	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Energy.", ".$Theta.")";
+	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Energy.", ".$Theta.")";
+	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Energy.", ".$Theta.")";
+	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Energy.", ".$Theta.")";
+	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Energy.", ".$Theta.")";
+	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Energy.", ".$Theta.")";
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -214,6 +413,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN")) {
 	display_none_all();
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	$xrlFunction == "DCS_Compt" ||
@@ -229,11 +429,29 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $Energy, $Theta);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION,  "C")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION,  "Fortran")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION,  "Perl")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION,  "IDL")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION,  "Python")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION,  "Java")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION,  "Csharp")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION,  "Lua")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION,  "Ruby")."(".$Element.", ".$Energy.", ".$Theta.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION,  "PHP")."(".$Element.", ".$Energy.", ".$Theta.")";
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy, $Theta);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $Language)."(".stringify($Element,$Language)."), ".$Energy.", ".$Theta.")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$Energy.", ".$Theta.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$Energy.", ".$Theta.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$Energy.", ".$Theta.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$Energy.", ".$Theta.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$Energy.", ".$Theta.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$Energy.", ".$Theta.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$Energy.", ".$Theta.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$Energy.", ".$Theta.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$Energy.", ".$Theta.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$Energy.", ".$Theta.")";
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -248,6 +466,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
 	$ElementStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
 	if (!is_numeric($Theta) || $Theta < 0.0 || $Theta > PI) {
@@ -259,7 +478,16 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
 		goto error;
 	}
 	$result = $xrlFunction($Theta, $Phi);
-	$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Theta.", ".$Phi.")";
+	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Theta.", ".$Phi.")";
+	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Theta.", ".$Phi.")";
+	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Theta.", ".$Phi.")";
+	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Theta.", ".$Phi.")";
+	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Theta.", ".$Phi.")";
+	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Theta.", ".$Phi.")";
+	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Theta.", ".$Phi.")";
+	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Theta.", ".$Phi.")";
+	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Theta.", ".$Phi.")";
+	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Theta.", ".$Phi.")";
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -267,6 +495,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
 	display_none_all();
 	$ThetaStyle="display:block";
 	$PhiStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
@@ -282,7 +511,16 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 		goto error;
 	}
 	$result = $xrlFunction($Energy, $Theta, $Phi);
-	$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Energy.", ".$Theta.", ".$Phi.")";
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -291,6 +529,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
 	$PhiStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	$xrlFunction == "DCSP_Compt" ||
@@ -310,11 +549,29 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $Energy, $Theta, $Phi);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy, $Theta, $Phi);
-		$command = expand_entity($xrlFunction, XRL_FUNCTION, $Language)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $Language)."(".stringify($Element,$Language)."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$Energy.", ".$Theta.", ".$Phi.")";
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -330,15 +587,17 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	$ThetaStyle="display:block";
 	$ElementStyle="display:block";
 	$PhiStyle="display:block";
+	$codeExampleStyle="display:block";
 }
 
 
 //error handling
 error:
 if (isset($_GET['xrlFunction']) && $result == 0.0) {
-	$result = $xrlFunction.": Invalid input";
+	$result = $xrlFunction.": Invalid input or zero was returned";
 	$unit = "";
 	$command = "";
+	$codeExampleStyle="display:none";
 }
 }
 ?>
@@ -354,7 +613,7 @@ if (isset($_GET['xrlFunction']) && $result == 0.0) {
 <br/>
 <p>
 <form method="get" action="<?php echo $_SERVER["PHP_SELF"];?>">
-Function: <select onchange="optionCheck(this)" name="xrlFunction" id="xrlFunction">
+Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xrlFunction">
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'LineEnergy') { ?>selected="true" <?php }; ?>value="LineEnergy" selected="selected">Fluorescence line energy</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'EdgeEnergy') { ?>selected="true" <?php }; ?>value="EdgeEnergy">Absorption edge energy</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AtomicWeight') { ?>selected="true" <?php }; ?>value="AtomicWeight">Atomic weight</option>
@@ -413,8 +672,9 @@ echo "<p style=\"font-size:20px\">";
 echo $result,$unit;
 ?>
 <p/>
-<p>Call in <select name="Language" id="Language">
-  <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'C') { ?>selected="true" <?php }; ?>value="C" selected="selected">C/C++/Objective-C</option>
+<div id="codeExample" style=<?php echo $codeExampleStyle;?>>
+<p>Call in <select name="Language" id="Language" onchange="optionCheckLanguage(this)">
+  <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'C') { ?>selected="true" <?php }; ?>value="C">C/C++/Objective-C</option>
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'Fortran') { ?>selected="true" <?php }; ?>value="Fortran">Fortran 2003/2008</option>
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'Perl') { ?>selected="true" <?php }; ?>value="Perl">Perl</option>
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'IDL') { ?>selected="true" <?php }; ?>value="IDL">IDL</option>
@@ -425,21 +685,61 @@ echo $result,$unit;
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'Ruby') { ?>selected="true" <?php }; ?>value="Ruby">Ruby</option>
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'PHP') { ?>selected="true" <?php }; ?>value="PHP">PHP</option>
 </select> as:</p>
+<div id="codeExampleC" style=<?php echo $codeExampleCStyle;?>><?php $geshi = new GeSHi($commandC, "c"); echo $geshi->parse_code();?></div>
+<div id="codeExampleFortran" style=<?php echo $codeExampleFortranStyle;?>><?php $geshi = new GeSHi($commandFortran, "fortran"); echo $geshi->parse_code();?></div>
+<div id="codeExamplePerl" style=<?php echo $codeExamplePerlStyle;?>><?php $geshi = new GeSHi($commandPerl, "perl"); echo $geshi->parse_code();?></div>
+<div id="codeExampleIDL" style=<?php echo $codeExampleIDLStyle;?>><?php $geshi = new GeSHi($commandIDL, "idl"); echo $geshi->parse_code();?></div>
+<div id="codeExamplePython" style=<?php echo $codeExamplePythonStyle;?>><?php $geshi = new GeSHi($commandPython, "python"); echo $geshi->parse_code();?></div>
+<div id="codeExampleJava" style=<?php echo $codeExampleJavaStyle;?>><?php $geshi = new GeSHi($commandJava, "java"); echo $geshi->parse_code();?></div>
+<div id="codeExampleCsharp" style=<?php echo $codeExampleCsharpStyle;?>><?php $geshi = new GeSHi($commandCsharp, "csharp"); echo $geshi->parse_code();?></div>
+<div id="codeExampleLua" style=<?php echo $codeExampleLuaStyle;?>><?php $geshi = new GeSHi($commandLua, "lua"); echo $geshi->parse_code();?></div>
+<div id="codeExampleRuby" style=<?php echo $codeExampleRubyStyle;?>><?php $geshi = new GeSHi($commandRuby, "ruby"); echo $geshi->parse_code();?></div>
+<div id="codeExamplePHP" style=<?php echo $codeExamplePHPStyle;?>><?php $geshi = new GeSHi($commandPHP, "php"); echo $geshi->parse_code();?></div>
 <?php
-if ($command != "") {
-$geshi = new GeSHi($command,strtolower($Language));
-echo $geshi->parse_code();
 echo "Enable support for xraylib in your program using:<br/>";
-$geshi = new GeSHi(xraylib_enable($Language),strtolower($Language));
-echo $geshi->parse_code();
-}
+//$geshi = new GeSHi(xraylib_enable($Language),strtolower($Language));
+//echo $geshi->parse_code();
 ?>
+<div id="includeSupportC" style=<?php echo $includeSupportCStyle;?>><?php echo xraylib_enable("C");?></div>
+<div id="includeSupportFortran" style=<?php echo $includeSupportFortranStyle;?>><?php echo xraylib_enable("Fortran");?></div>
+<div id="includeSupportPerl" style=<?php echo $includeSupportPerlStyle;?>><?php echo xraylib_enable("Perl");?></div>
+<div id="includeSupportIDL" style=<?php echo $includeSupportIDLStyle;?>><?php echo xraylib_enable("IDL");?></div>
+<div id="includeSupportPython" style=<?php echo $includeSupportPythonStyle;?>><?php echo xraylib_enable("Python");?></div>
+<div id="includeSupportJava" style=<?php echo $includeSupportJavaStyle;?>><?php echo xraylib_enable("Java");?></div>
+<div id="includeSupportCsharp" style=<?php echo $includeSupportCsharpStyle;?>><?php echo xraylib_enable("Csharp");?></div>
+<div id="includeSupportLua" style=<?php echo $includeSupportLuaStyle;?>><?php echo xraylib_enable("Lua");?></div>
+<div id="includeSupportRuby" style=<?php echo $includeSupportRubyStyle;?>><?php echo xraylib_enable("Ruby");?></div>
+<div id="includeSupportPHP" style=<?php echo $includeSupportPHPStyle;?>><?php echo xraylib_enable("PHP");?></div>
 </p>
+</div>
+
 </form>
 
-
 <script type="text/javascript">
-function display_none_all() {
+function displayNoneAllLanguage() {
+	document.getElementById("codeExampleC").style.display= "none";
+	document.getElementById("codeExampleFortran").style.display= "none";
+	document.getElementById("codeExamplePerl").style.display= "none";
+	document.getElementById("codeExampleIDL").style.display= "none";
+	document.getElementById("codeExamplePython").style.display= "none";
+	document.getElementById("codeExampleJava").style.display= "none"; 
+	document.getElementById("codeExampleCsharp").style.display= "none"; 
+	document.getElementById("codeExampleLua").style.display= "none"; 
+	document.getElementById("codeExampleRuby").style.display= "none"; 
+	document.getElementById("codeExamplePHP").style.display= "none"; 
+	document.getElementById("includeSupportC").style.display= "none";
+	document.getElementById("includeSupportFortran").style.display= "none";
+	document.getElementById("includeSupportPerl").style.display= "none";
+	document.getElementById("includeSupportIDL").style.display= "none";
+	document.getElementById("includeSupportPython").style.display= "none";
+	document.getElementById("includeSupportJava").style.display= "none"; 
+	document.getElementById("includeSupportCsharp").style.display= "none"; 
+	document.getElementById("includeSupportLua").style.display= "none"; 
+	document.getElementById("includeSupportRuby").style.display= "none"; 
+	document.getElementById("includeSupportPHP").style.display= "none"; 
+}
+
+function displayNoneAllFunction() {
 	document.getElementById("element").style.display= "none";
 	document.getElementById("linetype").style.display= "none";
 	document.getElementById("shell").style.display= "none";
@@ -447,20 +747,70 @@ function display_none_all() {
 	document.getElementById("theta").style.display= "none";
 	document.getElementById("phi").style.display= "none";
 }
-function optionCheck(combo) {
+
+function optionCheckLanguage(combo) {
+    var selectedValue = combo.options[combo.selectedIndex].value;
+
+    	displayNoneAllLanguage();
+	switch (selectedValue) {
+		case "C":
+			document.getElementById("codeExampleC").style.display= "block";
+			document.getElementById("includeSupportC").style.display= "block";
+			break;
+		case "Fortran":
+			document.getElementById("codeExampleFortran").style.display= "block";
+			document.getElementById("includeSupportFortran").style.display= "block";
+			break;
+		case "Perl":
+			document.getElementById("codeExamplePerl").style.display= "block";
+			document.getElementById("includeSupportPerl").style.display= "block";
+			break;
+		case "IDL":
+			document.getElementById("codeExampleIDL").style.display= "block";
+			document.getElementById("includeSupportIDL").style.display= "block";
+			break;
+		case "Python":
+			document.getElementById("codeExamplePython").style.display= "block";
+			document.getElementById("includeSupportPython").style.display= "block";
+			break;
+		case "Java":
+			document.getElementById("codeExampleJava").style.display= "block";
+			document.getElementById("includeSupportJava").style.display= "block";
+			break;
+		case "Csharp":
+			document.getElementById("codeExampleCsharp").style.display= "block";
+			document.getElementById("includeSupportCsharp").style.display= "block";
+			break;
+		case "Lua":
+			document.getElementById("codeExampleLua").style.display= "block";
+			document.getElementById("includeSupportLua").style.display= "block";
+			break;
+		case "Ruby":
+			document.getElementById("codeExampleRuby").style.display= "block";
+			document.getElementById("includeSupportRuby").style.display= "block";
+			break;
+		case "PHP":
+			document.getElementById("codeExamplePHP").style.display= "block";
+			document.getElementById("includeSupportPHP").style.display= "block";
+			break;
+			
+	}
+}
+
+function optionCheckFunction(combo) {
     /*jslint browser:true */
     var selectedValue = combo.options[combo.selectedIndex].value;
 
     if (selectedValue === "LineEnergy") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("element").style.display= "block";
 	document.getElementById("linetype").style.display= "block";
     } else if (selectedValue === "EdgeEnergy") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
     } else if (selectedValue === "AtomicWeight" || selectedValue === "ElementDensity") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "CS_Total" || 
       selectedValue === "CS_Photo" ||
@@ -471,33 +821,33 @@ function optionCheck(combo) {
       selectedValue === "CSb_Rayl" ||
       selectedValue === "CSb_Compt" ||
       selectedValue === "CS_Energy") {
-	display_none_all();
+	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "CS_KN") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
     } else if (selectedValue === "DCS_Thoms") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
     } else if (selectedValue === "DCS_KN") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("theta").style.display= "block";
     } else if (selectedValue === "DCS_Rayl" ||
       selectedValue === "DCS_Compt" ||
       selectedValue === "DCSb_Rayl" ||
       selectedValue === "DCSb_Compt") {
-	display_none_all();
+	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "DCSP_Thoms") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("phi").style.display= "block";
     } else if (selectedValue === "DCSP_KN") {
-    	display_none_all();
+    	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("phi").style.display= "block";
@@ -505,7 +855,7 @@ function optionCheck(combo) {
       selectedValue === "DCSP_Compt" ||
       selectedValue === "DCSPb_Rayl" ||
       selectedValue === "DCSPb_Compt") {
-	display_none_all();
+	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("element").style.display= "block";
