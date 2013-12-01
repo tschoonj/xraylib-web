@@ -6,8 +6,12 @@
 
 </head>
 <body>
+<?php 
+if ($_SERVER['REMOTE_ADDR'] != "127.0.0.1") {
+	//no need for this when using the localhost for testing
+	include_once("analyticstracking.php");
+}
 
-<?php
 include("xraylib.php");
 include("xraylib_aux.php");
 //error_reporting(E_WARNING);
