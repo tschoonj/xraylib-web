@@ -23,6 +23,7 @@ $Shell="K_SHELL";
 $Energy="10.0";
 $Theta=1.5707964;
 $Phi=3.14159;
+$MomentumTransfer=0.57032;
 $result="";
 $commandC="";
 $commandFortran="";
@@ -35,12 +36,15 @@ $commandLua="";
 $commandRuby="";
 $commandPHP="";
 $unit="";
+
 $ElementStyle="display:block";
 $LinetypeStyle="display:block";
 $ShellStyle="display:none";
 $EnergyStyle="display:none";
 $ThetaStyle="display:none";
 $PhiStyle="display:none";
+$MomentumTransferStyle="display:none";
+
 $Language="C";
 $codeExampleStyle="display:none";
 $codeExampleCStyle="display:block";
@@ -154,6 +158,9 @@ if (isset($_GET["Theta"])) {
 }
 if (isset($_GET["Phi"])) {
 	$Phi=$_GET['Phi'];
+}
+if (isset($_GET["MomentumTransfer"])) {
+	$MomentumTransfer=$_GET['MomentumTransfer'];
 }
 if (isset($_GET['xrlFunction']) && $xrlFunction == "LineEnergy") {
 	if (!is_numeric($Linename)) {
@@ -593,7 +600,48 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	$PhiStyle="display:block";
 	$codeExampleStyle="display:block";
 }
-
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "FF_Rayl" ||
+	$xrlFunction == "SF_Compt")) {
+	if (!is_numeric($MomentumTransfer)) {
+		$result=0.0;
+		goto error;
+	}
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $MomentumTransfer);
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".$MomentumTransfer.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".$MomentumTransfer.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".$MomentumTransfer.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".$MomentumTransfer.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".$MomentumTransfer.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".$MomentumTransfer.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".$MomentumTransfer.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".$MomentumTransfer.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".$MomentumTransfer.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".$MomentumTransfer.")";
+	}
+	else {
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $MomentumTransfer);
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$MomentumTransfer.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$MomentumTransfer.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$MomentumTransfer.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$MomentumTransfer.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$MomentumTransfer.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$MomentumTransfer.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$MomentumTransfer.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$MomentumTransfer.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$MomentumTransfer.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$MomentumTransfer.")";
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+		$unit = "";
+	}
+	display_none_all();
+	$ElementStyle="display:block";
+	$MomentumTransferStyle="display:block";
+	$codeExampleStyle="display:block";
+	
+}
 
 //error handling
 error:
@@ -644,6 +692,8 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'DCSP_Compt') { ?>selected="true" <?php }; ?>value="DCSP_Compt">Differential polarized Compton cross section</option>
 <!--  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'DCSPb_Rayl') { ?>selected="true" <?php }; ?>value="DCSPb_Rayl">DCSPb_Rayl</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'DCSPb_Compt') { ?>selected="true" <?php }; ?>value="DCSPb_Compt">DCSPb_Compt</option>-->
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'FF_Rayl') { ?>selected="true" <?php }; ?>value="FF_Rayl">Atomic form factor</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'SF_Compt') { ?>selected="true" <?php }; ?>value="SF_Compt">Incoherent scattering function</option>
 </select>
 
 <div id="inputParameter">
@@ -664,6 +714,9 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   </div>
   <div id="phi" style="<?php echo $PhiStyle;?>">
   Azimuthal angle: <input type="text" name="Phi" value="<?php echo $Phi;?>"/> rad
+  </div>
+  <div id="momentumtransfer" style="<?php echo $MomentumTransferStyle;?>">
+  Momentum transfer: <input type="text" name="MomentumTransfer" value="<?php echo $MomentumTransfer;?>"/>
   </div>
 </div>
 <br/>
@@ -750,6 +803,7 @@ function displayNoneAllFunction() {
 	document.getElementById("energy").style.display= "none";
 	document.getElementById("theta").style.display= "none";
 	document.getElementById("phi").style.display= "none";
+	document.getElementById("momentumtransfer").style.display= "none";
 }
 
 function optionCheckLanguage(combo) {
@@ -805,16 +859,14 @@ function optionCheckFunction(combo) {
     /*jslint browser:true */
     var selectedValue = combo.options[combo.selectedIndex].value;
 
+    displayNoneAllFunction();
     if (selectedValue === "LineEnergy") {
-    	displayNoneAllFunction();
 	document.getElementById("element").style.display= "block";
 	document.getElementById("linetype").style.display= "block";
     } else if (selectedValue === "EdgeEnergy") {
-    	displayNoneAllFunction();
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
     } else if (selectedValue === "AtomicWeight" || selectedValue === "ElementDensity") {
-    	displayNoneAllFunction();
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "CS_Total" || 
       selectedValue === "CS_Photo" ||
@@ -825,33 +877,26 @@ function optionCheckFunction(combo) {
       selectedValue === "CSb_Rayl" ||
       selectedValue === "CSb_Compt" ||
       selectedValue === "CS_Energy") {
-	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "CS_KN") {
-    	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
     } else if (selectedValue === "DCS_Thoms") {
-    	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
     } else if (selectedValue === "DCS_KN") {
-    	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("theta").style.display= "block";
     } else if (selectedValue === "DCS_Rayl" ||
       selectedValue === "DCS_Compt" ||
       selectedValue === "DCSb_Rayl" ||
       selectedValue === "DCSb_Compt") {
-	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "DCSP_Thoms") {
-    	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("phi").style.display= "block";
     } else if (selectedValue === "DCSP_KN") {
-    	displayNoneAllFunction();
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("phi").style.display= "block";
@@ -859,19 +904,22 @@ function optionCheckFunction(combo) {
       selectedValue === "DCSP_Compt" ||
       selectedValue === "DCSPb_Rayl" ||
       selectedValue === "DCSPb_Compt") {
-	displayNoneAllFunction();
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("element").style.display= "block";
 	document.getElementById("phi").style.display= "block";
+    } else if (selectedValue === "FF_Rayl" ||
+      selectedValue === "SF_Compt") {
+	document.getElementById("momentumtransfer").style.display= "block";
+	document.getElementById("element").style.display= "block";
     }
-
 }
 </script>
 <footer>
 <address>
 Maintained by <a href="mailto:Tom.Schoonjans@gmail.com">Tom Schoonjans</a><br/>
-Thanks to Prof. Laszlo Vincze of Ghent University for providing the webspace.
+Thanks to Prof. Laszlo Vincze of Ghent University for providing the webspace.<br/>
+Built using xraylib <?php echo XRAYLIB_MAJOR.".".XRAYLIB_MINOR?>.
 </address>
 </footer>
 </body>

@@ -122,6 +122,7 @@ function display_none_all(){
 	global $ThetaStyle;
 	global $PhiStyle;
 	global $LinetypeStyle;
+	global $MomentumTransferStyle;
 
 	$ElementStyle="display:none";
 	$ShellStyle="display:none";
@@ -129,6 +130,7 @@ function display_none_all(){
 	$ThetaStyle="display:none";
 	$PhiStyle="display:none";
 	$LinetypeStyle="display:none";
+	$MomentumTransferStyle="display:none";
 }
 
 ?>
