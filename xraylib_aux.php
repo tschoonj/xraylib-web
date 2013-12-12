@@ -123,6 +123,7 @@ function display_none_all(){
 	global $PhiStyle;
 	global $LinetypeStyle;
 	global $MomentumTransferStyle;
+	global $CKTransStyle;
 
 	$ElementStyle="display:none";
 	$ShellStyle="display:none";
@@ -131,6 +132,7 @@ function display_none_all(){
 	$PhiStyle="display:none";
 	$LinetypeStyle="display:none";
 	$MomentumTransferStyle="display:none";
+	$CKTransStyle="display:none";
 }
 
 ?>

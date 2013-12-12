@@ -24,6 +24,7 @@ $Energy="10.0";
 $Theta=1.5707964;
 $Phi=3.14159;
 $MomentumTransfer=0.57032;
+$CKTrans="FL12_TRANS";
 $result="";
 $commandC="";
 $commandFortran="";
@@ -44,6 +45,8 @@ $EnergyStyle="display:none";
 $ThetaStyle="display:none";
 $PhiStyle="display:none";
 $MomentumTransferStyle="display:none";
+$CKTransStyle="display:none";
+
 
 $Language="C";
 $codeExampleStyle="display:none";
@@ -161,6 +164,9 @@ if (isset($_GET["Phi"])) {
 }
 if (isset($_GET["MomentumTransfer"])) {
 	$MomentumTransfer=$_GET['MomentumTransfer'];
+}
+if (isset($_GET["CKTrans"])) {
+	$CKTrans=$_GET['CKTrans'];
 }
 if (isset($_GET['xrlFunction']) && $xrlFunction == "LineEnergy") {
 	if (!is_numeric($Linename)) {
@@ -397,7 +403,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
 	$ThetaStyle="display:block";
 	$codeExampleStyle="display:block";
 }
-elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN")) {
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" || $xrlFunction == "MomentTransf")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -420,7 +426,12 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN")) {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	$unit=" cm<sup>2</sup>/g/sr";
+	if ($xrlFunction == "DCS_KN") {
+		$unit=" cm<sup>2</sup>/g/sr";
+	}
+	else {
+		$unit = "";
+	}
 	display_none_all();
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
@@ -642,6 +653,43 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "FF_Rayl" ||
 	$codeExampleStyle="display:block";
 	
 }
+elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CosKronTransProb") {
+	$realCKTrans = constant($CKTrans);
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $realCKTrans);
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "C").")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Fortran").")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Perl").")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "IDL").")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Python").")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Java").")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Csharp").")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Lua").")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Ruby").")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "PHP").")";
+	}
+	else {
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realCKTrans);
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".expand_entity($CKTrans, XRL_MACRO, "C").")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".expand_entity($CKTrans, XRL_MACRO, "Fortran").")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".expand_entity($CKTrans, XRL_MACRO, "Perl").")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".expand_entity($CKTrans, XRL_MACRO, "IDL").")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".expand_entity($CKTrans, XRL_MACRO, "Python").")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".expand_entity($CKTrans, XRL_MACRO, "Java").")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".expand_entity($CKTrans, XRL_MACRO, "Csharp").")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".expand_entity($CKTrans, XRL_MACRO, "Lua").")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".expand_entity($CKTrans, XRL_MACRO, "Ruby").")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".expand_entity($CKTrans, XRL_MACRO, "PHP").")";
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+	}
+	$unit="";
+	display_none_all();
+	$ElementStyle="display:block";
+	$CKTransStyle="display:block";
+	$codeExampleStyle="display:block";
+}
 
 //error handling
 error:
@@ -666,7 +714,7 @@ if (isset($_GET['xrlFunction']) && $result == 0.0) {
 <p>
 <form method="get" action="<?php echo $_SERVER["PHP_SELF"];?>">
 Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xrlFunction">
-  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'LineEnergy') { ?>selected="true" <?php }; ?>value="LineEnergy" selected="selected">Fluorescence line energy</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'LineEnergy') { ?>selected="true" <?php }; ?>value="LineEnergy">Fluorescence line energy</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'EdgeEnergy') { ?>selected="true" <?php }; ?>value="EdgeEnergy">Absorption edge energy</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AtomicWeight') { ?>selected="true" <?php }; ?>value="AtomicWeight">Atomic weight</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ElementDensity') { ?>selected="true" <?php }; ?>value="ElementDensity">Elemental density</option>
@@ -694,6 +742,8 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'DCSPb_Compt') { ?>selected="true" <?php }; ?>value="DCSPb_Compt">DCSPb_Compt</option>-->
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'FF_Rayl') { ?>selected="true" <?php }; ?>value="FF_Rayl">Atomic form factor</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'SF_Compt') { ?>selected="true" <?php }; ?>value="SF_Compt">Incoherent scattering function</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'MomentTransf') { ?>selected="true" <?php }; ?>value="MomentTransf">Momentum transfer function</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CosKronTransProb') { ?>selected="true" <?php }; ?>value="CosKronTransProb">Coster-Kronig transition probability</option>
 </select>
 
 <div id="inputParameter">
@@ -710,13 +760,30 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   Energy: <input type="text" name="Energy" value="<?php echo $Energy;?>"/> keV
   </div>
   <div id="theta" style="<?php echo $ThetaStyle;?>">
-  Scatter angle: <input type="text" name="Theta" value="<?php echo $Theta;?>"/> rad
+  Scattering angle: <input type="text" name="Theta" value="<?php echo $Theta;?>"/> rad
   </div>
   <div id="phi" style="<?php echo $PhiStyle;?>">
   Azimuthal angle: <input type="text" name="Phi" value="<?php echo $Phi;?>"/> rad
   </div>
   <div id="momentumtransfer" style="<?php echo $MomentumTransferStyle;?>">
   Momentum transfer: <input type="text" name="MomentumTransfer" value="<?php echo $MomentumTransfer;?>"/>
+  </div>
+  <div id="cktrans" style="<?php echo $CKTransStyle;?>">
+  Transition <select name="CKTrans" id="CKTrans">
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FL12_TRANS') { ?> selected="true" <?php }; ?>value="FL12_TRANS">L1 &rarr; L2</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FL13_TRANS') { ?> selected="true" <?php }; ?>value="FL13_TRANS">L1 &rarr; L3</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FL23_TRANS') { ?> selected="true" <?php }; ?>value="FL23_TRANS">L2 &rarr; L3</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM12_TRANS') { ?> selected="true" <?php }; ?>value="FM12_TRANS">M1 &rarr; M2</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM13_TRANS') { ?> selected="true" <?php }; ?>value="FM13_TRANS">M1 &rarr; M3</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM14_TRANS') { ?> selected="true" <?php }; ?>value="FM14_TRANS">M1 &rarr; M4</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM15_TRANS') { ?> selected="true" <?php }; ?>value="FM15_TRANS">M1 &rarr; M5</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM23_TRANS') { ?> selected="true" <?php }; ?>value="FM23_TRANS">M2 &rarr; M3</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM24_TRANS') { ?> selected="true" <?php }; ?>value="FM24_TRANS">M2 &rarr; M4</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM25_TRANS') { ?> selected="true" <?php }; ?>value="FM25_TRANS">M2 &rarr; M5</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM34_TRANS') { ?> selected="true" <?php }; ?>value="FM34_TRANS">M3 &rarr; M4</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM35_TRANS') { ?> selected="true" <?php }; ?>value="FM35_TRANS">M3 &rarr; M5</option>
+  <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM45_TRANS') { ?> selected="true" <?php }; ?>value="FM45_TRANS">M4 &rarr; M5</option>
+  </select>
   </div>
 </div>
 <br/>
@@ -804,6 +871,7 @@ function displayNoneAllFunction() {
 	document.getElementById("theta").style.display= "none";
 	document.getElementById("phi").style.display= "none";
 	document.getElementById("momentumtransfer").style.display= "none";
+	document.getElementById("cktrans").style.display= "none";
 }
 
 function optionCheckLanguage(combo) {
@@ -883,7 +951,8 @@ function optionCheckFunction(combo) {
 	document.getElementById("energy").style.display= "block";
     } else if (selectedValue === "DCS_Thoms") {
 	document.getElementById("theta").style.display= "block";
-    } else if (selectedValue === "DCS_KN") {
+    } else if (selectedValue === "DCS_KN" ||
+      selectedValue === "MomentTransf") {
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("theta").style.display= "block";
     } else if (selectedValue === "DCS_Rayl" ||
@@ -912,6 +981,9 @@ function optionCheckFunction(combo) {
       selectedValue === "SF_Compt") {
 	document.getElementById("momentumtransfer").style.display= "block";
 	document.getElementById("element").style.display= "block";
+    } else if (selectedValue === "CosKronTransProb") {
+	document.getElementById("element").style.display= "block";
+	document.getElementById("cktrans").style.display= "block";
     }
 }
 </script>
