@@ -392,7 +392,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	$unit=" cm<sup>2</sup>/g/sterad";
+	$unit=" cm<sup>2</sup>/g/sr";
 	display_none_all();
 	$ThetaStyle="display:block";
 	$codeExampleStyle="display:block";
@@ -420,7 +420,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN")) {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	$unit=" cm<sup>2</sup>/g/sterad";
+	$unit=" cm<sup>2</sup>/g/sr";
 	display_none_all();
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
@@ -468,10 +468,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 		$result = sprintf("%g", $result);
 	}
 	if (substr($xrlFunction,0,4) == "DCSb"){
-		$unit=" barns/atom/sterad";
+		$unit=" barns/atom/sr";
 	}
 	else {
-		$unit=" cm<sup>2</sup>/g/sterad";
+		$unit=" cm<sup>2</sup>/g/sr";
 	}
 	display_none_all();
 	$EnergyStyle="display:block";
@@ -502,7 +502,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	$unit=" cm<sup>2</sup>/g/sterad";
+	$unit=" cm<sup>2</sup>/g/sr";
 	display_none_all();
 	$ThetaStyle="display:block";
 	$PhiStyle="display:block";
@@ -535,7 +535,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	$unit=" cm<sup>2</sup>/g/sterad";
+	$unit=" cm<sup>2</sup>/g/sr";
 	display_none_all();
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
@@ -588,10 +588,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 		$result = sprintf("%g", $result);
 	}
 	if (substr($xrlFunction,0,5) == "DCSPb"){
-		$unit=" barns/atom/sterad";
+		$unit=" barns/atom/sr";
 	}
 	else {
-		$unit=" cm<sup>2</sup>/g/sterad";
+		$unit=" cm<sup>2</sup>/g/sr";
 	}
 	display_none_all();
 	$EnergyStyle="display:block";
