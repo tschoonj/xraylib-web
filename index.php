@@ -215,7 +215,10 @@ if (isset($_GET['xrlFunction']) && $xrlFunction == "LineEnergy") {
 	$LinetypeStyle="display:block";
 	$codeExampleStyle="display:block";
 }
-elseif (isset($_GET['xrlFunction']) && $xrlFunction == "EdgeEnergy") {
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
+	$xrlFunction == "FluorYield" ||
+	$xrlFunction == "JumpFactor"
+	)) {
 	if (!is_numeric($Shell)) {
 		//Shell is not an integer, so it should be one of the constants
 		$realShell = @constant($Shell);
@@ -257,7 +260,12 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "EdgeEnergy") {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	$unit=" keV";
+	if ($xrlFunction == "EdgeEnergy") {
+		$unit=" keV";
+	}
+	else {
+		$unit="";
+	}
 	display_none_all();
 	$ElementStyle="display:block";
 	$ShellStyle="display:block";
@@ -744,6 +752,8 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'SF_Compt') { ?>selected="true" <?php }; ?>value="SF_Compt">Incoherent scattering function</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'MomentTransf') { ?>selected="true" <?php }; ?>value="MomentTransf">Momentum transfer function</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CosKronTransProb') { ?>selected="true" <?php }; ?>value="CosKronTransProb">Coster-Kronig transition probability</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'FluorYield') { ?>selected="true" <?php }; ?>value="FluorYield">Fluorescence yield</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'JumpFactor') { ?>selected="true" <?php }; ?>value="JumpFactor">Jump factor</option>
 </select>
 
 <div id="inputParameter">
@@ -931,7 +941,9 @@ function optionCheckFunction(combo) {
     if (selectedValue === "LineEnergy") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("linetype").style.display= "block";
-    } else if (selectedValue === "EdgeEnergy") {
+    } else if (selectedValue === "EdgeEnergy" ||
+      selectedValue === "JumpFactor" ||
+      selectedValue === "FluorYield") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
     } else if (selectedValue === "AtomicWeight" || selectedValue === "ElementDensity") {
