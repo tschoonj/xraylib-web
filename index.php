@@ -219,18 +219,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$xrlFunction == "FluorYield" ||
 	$xrlFunction == "JumpFactor"
 	)) {
-	if (!is_numeric($Shell)) {
-		//Shell is not an integer, so it should be one of the constants
-		$realShell = @constant($Shell);
-		if (!isset($realShell)) {
-			$result=0.0;
-			goto error;
-		}
-	}
-	else {
-		$result=0.0;
-		goto error;
-	}
+	$realShell = @constant($Shell);
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $realShell);
 		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "C").")";
@@ -764,7 +753,39 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   XRF linename: <input type="text" name="Linename" value="<?php echo $Linename;?>"/>
   </div>
   <div id="shell" style="<?php echo $ShellStyle;?>">
-  Shell: <input type="text" name="Shell" value="<?php echo $Shell;?>"/>
+  Shell: <select name="Shell" id="Shell">
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'K_SHELL') { ?> selected="true" <?php }; ?>value="K_SHELL">K</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'L1_SHELL') { ?> selected="true" <?php }; ?>value="L1_SHELL">L1</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'L2_SHELL') { ?> selected="true" <?php }; ?>value="L2_SHELL">L2</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'L3_SHELL') { ?> selected="true" <?php }; ?>value="L3_SHELL">L3</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'M1_SHELL') { ?> selected="true" <?php }; ?>value="M1_SHELL">M1</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'M2_SHELL') { ?> selected="true" <?php }; ?>value="M2_SHELL">M2</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'M3_SHELL') { ?> selected="true" <?php }; ?>value="M3_SHELL">M3</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'M4_SHELL') { ?> selected="true" <?php }; ?>value="M4_SHELL">M4</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'M5_SHELL') { ?> selected="true" <?php }; ?>value="M5_SHELL">M5</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'N1_SHELL') { ?> selected="true" <?php }; ?>value="N1_SHELL">N1</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'N2_SHELL') { ?> selected="true" <?php }; ?>value="N2_SHELL">N2</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'N3_SHELL') { ?> selected="true" <?php }; ?>value="N3_SHELL">N3</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'N4_SHELL') { ?> selected="true" <?php }; ?>value="N4_SHELL">N4</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'N5_SHELL') { ?> selected="true" <?php }; ?>value="N5_SHELL">N5</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'N6_SHELL') { ?> selected="true" <?php }; ?>value="N6_SHELL">N6</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'N7_SHELL') { ?> selected="true" <?php }; ?>value="N7_SHELL">N7</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'O1_SHELL') { ?> selected="true" <?php }; ?>value="O1_SHELL">O1</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'O2_SHELL') { ?> selected="true" <?php }; ?>value="O2_SHELL">O2</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'O3_SHELL') { ?> selected="true" <?php }; ?>value="O3_SHELL">O3</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'O4_SHELL') { ?> selected="true" <?php }; ?>value="O4_SHELL">O4</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'O5_SHELL') { ?> selected="true" <?php }; ?>value="O5_SHELL">O5</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'O6_SHELL') { ?> selected="true" <?php }; ?>value="O6_SHELL">O6</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'O7_SHELL') { ?> selected="true" <?php }; ?>value="O7_SHELL">O7</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'P1_SHELL') { ?> selected="true" <?php }; ?>value="P1_SHELL">P1</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'P2_SHELL') { ?> selected="true" <?php }; ?>value="P2_SHELL">P2</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'P3_SHELL') { ?> selected="true" <?php }; ?>value="P3_SHELL">P3</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'P4_SHELL') { ?> selected="true" <?php }; ?>value="P4_SHELL">P4</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'P5_SHELL') { ?> selected="true" <?php }; ?>value="P5_SHELL">P5</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'Q1_SHELL') { ?> selected="true" <?php }; ?>value="Q1_SHELL">Q1</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'Q2_SHELL') { ?> selected="true" <?php }; ?>value="Q2_SHELL">Q2</option>
+  <option <?php if (isset($_GET['Shell']) && $_GET['Shell'] == 'Q3_SHELL') { ?> selected="true" <?php }; ?>value="Q3_SHELL">Q3</option>
+  </select>
   </div>
   <div id="energy" style="<?php echo $EnergyStyle;?>">
   Energy: <input type="text" name="Energy" value="<?php echo $Energy;?>"/> keV
