@@ -168,7 +168,9 @@ if (isset($_GET["MomentumTransfer"])) {
 if (isset($_GET["CKTrans"])) {
 	$CKTrans=$_GET['CKTrans'];
 }
-if (isset($_GET['xrlFunction']) && $xrlFunction == "LineEnergy") {
+if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
+	$xrlFunction == "RadRate"
+	)) {
 	if (!is_numeric($Linename)) {
 		//Linename is not an integer, so it should be one of the constants
 		$realLinename = @constant($Linename);
@@ -209,7 +211,12 @@ if (isset($_GET['xrlFunction']) && $xrlFunction == "LineEnergy") {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	$unit=" keV";
+	if ($xrlFunction == "LineEnergy") {
+		$unit=" keV";
+	}
+	else {
+		$unit="";
+	}
 	display_none_all();
 	$ElementStyle="display:block";
 	$LinetypeStyle="display:block";
@@ -743,6 +750,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CosKronTransProb') { ?>selected="true" <?php }; ?>value="CosKronTransProb">Coster-Kronig transition probability</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'FluorYield') { ?>selected="true" <?php }; ?>value="FluorYield">Fluorescence yield</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'JumpFactor') { ?>selected="true" <?php }; ?>value="JumpFactor">Jump factor</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'RadRate') { ?>selected="true" <?php }; ?>value="RadRate">Radiative transition probability</option>
 </select>
 
 <div id="inputParameter">
@@ -959,7 +967,8 @@ function optionCheckFunction(combo) {
     var selectedValue = combo.options[combo.selectedIndex].value;
 
     displayNoneAllFunction();
-    if (selectedValue === "LineEnergy") {
+    if (selectedValue === "LineEnergy" ||
+      selectedValue === "RadRate") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("linetype").style.display= "block";
     } else if (selectedValue === "EdgeEnergy" ||
