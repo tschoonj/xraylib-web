@@ -407,7 +407,9 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
 	$ThetaStyle="display:block";
 	$codeExampleStyle="display:block";
 }
-elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" || $xrlFunction == "MomentTransf")) {
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" ||
+	$xrlFunction == "MomentTransf" || 
+	$xrlFunction == "ComptonEnergy")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -432,6 +434,9 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" || $xrlFunction
 	}
 	if ($xrlFunction == "DCS_KN") {
 		$unit=" cm<sup>2</sup>/g/sr";
+	}
+	elseif ($xrlFunction == "ComptonEnergy") {
+		$unit=" keV";
 	}
 	else {
 		$unit = "";
@@ -751,6 +756,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'FluorYield') { ?>selected="true" <?php }; ?>value="FluorYield">Fluorescence yield</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'JumpFactor') { ?>selected="true" <?php }; ?>value="JumpFactor">Jump factor</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'RadRate') { ?>selected="true" <?php }; ?>value="RadRate">Radiative transition probability</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonEnergy') { ?>selected="true" <?php }; ?>value="ComptonEnergy">Energy after Compton scattering</option>
 </select>
 
 <div id="inputParameter">
@@ -994,7 +1000,8 @@ function optionCheckFunction(combo) {
     } else if (selectedValue === "DCS_Thoms") {
 	document.getElementById("theta").style.display= "block";
     } else if (selectedValue === "DCS_KN" ||
-      selectedValue === "MomentTransf") {
+      selectedValue === "MomentTransf" ||
+      selectedValue === "ComptonEnergy") {
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("theta").style.display= "block";
     } else if (selectedValue === "DCS_Rayl" ||
