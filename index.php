@@ -19,6 +19,10 @@ include("xraylib_aux.php");
 $xrlFunction="LineEnergy";
 $Element="26";
 $Linename="KL3_LINE";
+$LinenameSwitch="IUPAC";
+$Linename1a="K";
+$Linename1b="L3";
+$Linename2="KA1_LINE";
 $Shell="K_SHELL";
 $Energy="10.0";
 $Theta=1.5707964;
@@ -37,6 +41,10 @@ $commandLua="";
 $commandRuby="";
 $commandPHP="";
 $unit="";
+$shellsArray = array("K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "P1", "P2", "P3", "P4", "P5", "Q1", "Q2", "Q3");
+$siegbahnArray = array("KA1", "KA2", "KB1", "KB2", "KB3", "KB4", "KB5",
+"LA1", "LA2", "LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB9", "LB10", "LB15", "LB17",
+"LG1", "LG2", "LG3", "LG4", "LG5", "LG6", "LG8", "LE", "LL", "LS", "LT", "LU", "LV");
 
 $ElementStyle="display:block";
 $LinetypeStyle="display:block";
@@ -78,9 +86,32 @@ if ($_SERVER["REQUEST_METHOD"] == "GET"){
 if (isset($_GET["Element"])) {
 	$Element = $_GET["Element"];
 }
-if (isset($_GET["Linename"])) {
-	$Linename= $_GET["Linename"];
+//if (isset($_GET["Linename"])) {
+//	$Linename= $_GET["Linename"];
+//}
+
+if (isset($_GET["Linename1a"])) {
+	$Linename1a = $_GET["Linename1a"];
 }
+
+if (isset($_GET["Linename1b"])) {
+	$Linename1b = $_GET["Linename1b"];
+}
+
+if (isset($_GET["Linename2"])) {
+	$Linename2 = $_GET["Linename2"];
+}
+
+if (isset($_GET["LinenameSwitch"])) {
+	$LinenameSwitch = $_GET["LinenameSwitch"];
+	if ($LinenameSwitch == "IUPAC") {
+		$Linename = $Linename1a . $Linename1b . "_LINE";
+	}
+	elseif ($LinenameSwitch == "Siegbahn") {
+		$Linename = $Linename2;
+	}
+}
+
 if (isset($_GET["Shell"])) {
 	$Shell = $_GET["Shell"];
 }
@@ -764,7 +795,49 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   Element: <input type="text" name="Element" value="<?php echo $Element;?>"/>
   </div>
   <div id="linetype" style="<?php echo $LinetypeStyle;?>">
-  XRF linename: <input type="text" name="Linename" value="<?php echo $Linename;?>"/>
+  <!--XRF linename: <input type="text" name="Linename" value="<?php echo $Linename;?>"/>-->
+  <input type="radio" name="LinenameSwitch" id="IUPAC"
+   value="IUPAC" <?php if ($LinenameSwitch == 'IUPAC') { ?> checked <?php }?>/>
+   <label for="IUPAC">Transition (IUPAC notation)</label>
+   <select name="Linename1a" id="Linename1a" onchange="Linename1aChanged(this)">
+	<?php 
+		foreach (array_slice($shellsArray, 0, -1) as $shell) {
+			echo "<option value=\"$shell\"";
+			if ($Linename1a == $shell) {
+				echo "selected=\"true\" ";
+			}
+			echo "> $shell</option>";
+		}
+	?>
+   </select> &larr; <select name="Linename1b" id="Linename1b">
+	<?php
+		$res = array_search($Linename1a, $shellsArray, true);
+		$slice = array_slice($shellsArray, $res+1);
+		$i = 0;
+		foreach ($slice as $shell) {
+			echo "<option value=\"$shell\"";
+			if (($i++ == 0 && array_search($Linename1b, $slice) === FALSE) || $Linename1b == $shell) {
+				echo "selected=\"true\" ";
+			}
+			echo "> $shell</option>";
+		}
+	?>
+   </select><br/>
+  <input type="radio" name="LinenameSwitch" id="Siegbahn"
+   value="Siegbahn" <?php if ($LinenameSwitch == 'Siegbahn') { ?> checked <?php }?>/>
+   <label for="Siegbahn">Transition (Siegbahn notation)</label>
+   <select name="Linename2" id="Linename2">
+   	<?php
+		foreach($siegbahnArray as $siegbahn) {
+			$siegbahnFull = $siegbahn."_LINE";
+			echo "<option value=\"$siegbahnFull\"";
+			if ($Linename2 == $siegbahnFull) {
+				echo "selected=\"true\" ";
+			}
+			echo "> $siegbahn</option>";
+		}
+	?>
+   </select>
   </div>
   <div id="shell" style="<?php echo $ShellStyle;?>">
   Shell: <select name="Shell" id="Shell">
@@ -967,6 +1040,30 @@ function optionCheckLanguage(combo) {
 			
 	}
 }
+
+function Linename1aChanged(Linename1a) {
+    var shellsArray = ["K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "P1", "P2", "P3", "P4", "P5", "Q1", "Q2", "Q3"];
+
+    var Linename1b = document.getElementById("Linename1b");
+    //get selected value
+    var selected = Linename1b.options[Linename1b.selectedIndex].value;
+
+    //clear Linename1b
+    Linename1b.options.length = 0;
+    var res = shellsArray.indexOf(Linename1a.options[Linename1a.selectedIndex].value);
+    var match = false;
+    for (var i = res+1 ; i < shellsArray.length ; i++) {
+    	Linename1b.options.add(new Option(shellsArray[i], shellsArray[i]));
+	if (shellsArray[i] == selected) {
+		Linename1b.options[i-res-1].selected = true;
+		match = true;
+	}
+    }
+    if (match == false) {
+        //select the first option if previously selected value is not found
+	Linename1b.options[0].selected = true;
+    }
+} 
 
 function optionCheckFunction(combo) {
     /*jslint browser:true */
