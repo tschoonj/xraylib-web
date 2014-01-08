@@ -795,10 +795,13 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   Element: <input type="text" name="Element" value="<?php echo $Element;?>"/>
   </div>
   <div id="linetype" style="<?php echo $LinetypeStyle;?>">
-  <!--XRF linename: <input type="text" name="Linename" value="<?php echo $Linename;?>"/>-->
+  <table border="0" style="border-spacing:0px">
+  <tr>
+  <td style="padding-left:0px;border-left-width:0px">Transition</td>
+  <td>
   <input type="radio" name="LinenameSwitch" id="IUPAC"
    value="IUPAC" <?php if ($LinenameSwitch == 'IUPAC') { ?> checked <?php }?>/>
-   <label for="IUPAC">Transition (IUPAC notation)</label>
+   <label for="IUPAC">IUPAC notation</label>
    <select name="Linename1a" id="Linename1a" onchange="Linename1aChanged(this)">
 	<?php 
 		foreach (array_slice($shellsArray, 0, -1) as $shell) {
@@ -825,7 +828,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
    </select><br/>
   <input type="radio" name="LinenameSwitch" id="Siegbahn"
    value="Siegbahn" <?php if ($LinenameSwitch == 'Siegbahn') { ?> checked <?php }?>/>
-   <label for="Siegbahn">Transition (Siegbahn notation)</label>
+   <label for="Siegbahn">Siegbahn notation</label>
    <select name="Linename2" id="Linename2">
    	<?php
 		foreach($siegbahnArray as $siegbahn) {
@@ -838,6 +841,9 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
 		}
 	?>
    </select>
+   </td>
+   </tr>
+   </table>
   </div>
   <div id="shell" style="<?php echo $ShellStyle;?>">
   Shell: <select name="Shell" id="Shell">
