@@ -31,16 +31,20 @@ $Phi=3.14159;
 $MomentumTransfer=0.57032;
 $CKTrans="FL12_TRANS";
 $result="";
-$commandC="";
-$commandFortran="";
-$commandPerl="";
-$commandIDL="";
-$commandPython="";
-$commandJava="";
-$commandCsharp="";
-$commandLua="";
-$commandRuby="";
-$commandPHP="";
+
+$commands = array(
+	"C" => "",
+	"Fortran" => "",
+	"Perl" => "",
+	"IDL" => "",
+	"Python" => "",
+	"Java" => "",
+	"Csharp" => "",
+	"Lua" => "",
+	"Ruby" => "",
+	"PHP" => ""
+);
+
 $unit="";
 $shellsArray = array("K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "P1", "P2", "P3", "P4", "P5", "Q1", "Q2", "Q3");
 $siegbahnArray = array("KA1", "KA2", "KB1", "KB2", "KB3", "KB4", "KB5",
@@ -219,28 +223,17 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $realLinename);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "C").")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Fortran").")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Perl").")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "IDL").")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Python").")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Java").")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Csharp").")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Lua").")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".expand_entity($Linename, XRL_MACRO, "Ruby").")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Linename, XRL_MACRO, $key).")";
+		}
+		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realLinename);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".expand_entity($Linename, XRL_MACRO, "C").")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".expand_entity($Linename, XRL_MACRO, "Fortran").")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".expand_entity($Linename, XRL_MACRO, "Perl").")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".expand_entity($Linename, XRL_MACRO, "IDL").")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".expand_entity($Linename, XRL_MACRO, "Python").")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".expand_entity($Linename, XRL_MACRO, "Java").")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".expand_entity($Linename, XRL_MACRO, "Csharp").")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".expand_entity($Linename, XRL_MACRO, "Lua").")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".expand_entity($Linename, XRL_MACRO, "Ruby").")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".expand_entity($Linename, XRL_MACRO, "PHP").")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Linename, XRL_MACRO, $key).")";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -263,29 +256,17 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$realShell = @constant($Shell);
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $realShell);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "C").")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Fortran").")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Perl").")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "IDL").")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Python").")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Java").")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Csharp").")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Lua").")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "Ruby").")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".expand_entity($Shell, XRL_MACRO, "PHP").")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).")";
+		}
+		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".expand_entity($Shell, XRL_MACRO, "C").")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".expand_entity($Shell, XRL_MACRO, "Fortran").")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".expand_entity($Shell, XRL_MACRO, "Perl").")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".expand_entity($Shell, XRL_MACRO, "IDL").")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".expand_entity($Shell, XRL_MACRO, "Python").")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".expand_entity($Shell, XRL_MACRO, "Java").")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".expand_entity($Shell, XRL_MACRO, "Csharp").")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".expand_entity($Shell, XRL_MACRO, "Lua").")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".expand_entity($Shell, XRL_MACRO, "Ruby").")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".expand_entity($Shell, XRL_MACRO, "PHP").")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).")";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -304,29 +285,17 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "AtomicWeight" || $xrlFunction == "ElementDensity")) {
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.")";
+		foreach ($commands as $key => &$value) {
+			$value= expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.")";
+		}
+		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element));
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."))";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."))";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."))";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."))";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."))";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."))";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."))";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."))";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."))";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."))";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."))";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -354,45 +323,27 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 	}
 	if (is_numeric($ElementOrCompound)) {
 		$result = $xrlFunction($ElementOrCompound, $Energy);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$ElementOrCompound.", ".$Energy.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$ElementOrCompound.", ".$Energy.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$ElementOrCompound.", ".$Energy.")";
+		}
+		unset($value);
 	}
 	elseif (SymbolToAtomicNumber($ElementOrCompound) > 0) {
 		#chemical symbol found
 		$result = $xrlFunction(SymbolToAtomicNumber($ElementOrCompound), $Energy);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($ElementOrCompound, "C")."), ".$Energy.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($ElementOrCompound, "Fortran")."), ".$Energy.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($ElementOrCompound, "Perl")."), ".$Energy.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($ElementOrCompound, "IDL")."), ".$Energy.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($ElementOrCompound, "Python")."), ".$Energy.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($ElementOrCompound, "Java")."), ".$Energy.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($ElementOrCompound, "Csharp")."), ".$Energy.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($ElementOrCompound, "Lua")."), ".$Energy.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($ElementOrCompound, "Ruby")."), ".$Energy.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($ElementOrCompound, "PHP")."), ".$Energy.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($ElementOrCompound, $key)."), ".$Energy.")";
+		}
+		unset($value);
 	}
 	else {
 		#compound then maybe...		
 		$xrlFunction_cp = $xrlFunction."_CP";
 		$result = $xrlFunction_cp($ElementOrCompound, $Energy);
-		$commandC = expand_entity($xrlFunction_cp, XRL_FUNCTION, "C")."(".stringify($ElementOrCompound, "C").", ".$Energy.")";
-		$commandFortran = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Fortran")."(".stringify($ElementOrCompound, "Fortran").", ".$Energy.")";
-		$commandPerl = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Perl")."(".stringify($ElementOrCompound, "Perl").", ".$Energy.")";
-		$commandIDL = expand_entity($xrlFunction_cp, XRL_FUNCTION, "IDL")."(".stringify($ElementOrCompound, "IDL").", ".$Energy.")";
-		$commandPython = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Python")."(".stringify($ElementOrCompound, "Python").", ".$Energy.")";
-		$commandJava = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Java")."(".stringify($ElementOrCompound, "Java").", ".$Energy.")";
-		$commandCsharp = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Csharp")."(".stringify($ElementOrCompound, "Csharp").", ".$Energy.")";
-		$commandLua = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Lua")."(".stringify($ElementOrCompound, "Lua").", ".$Energy.")";
-		$commandRuby = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Ruby")."(".stringify($ElementOrCompound, "Ruby").", ".$Energy.")";
-		$commandPHP = expand_entity($xrlFunction_cp, XRL_FUNCTION, "PHP")."(".stringify($ElementOrCompound, "PHP").", ".$Energy.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction_cp, XRL_FUNCTION, $key)."(".stringify($ElementOrCompound, $key).", ".$Energy.")";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -415,16 +366,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
 		goto error;
 	}
 	$result = $xrlFunction($Energy);
-	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Energy.")";
-	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Energy.")";
-	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Energy.")";
-	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Energy.")";
-	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Energy.")";
-	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Energy.")";
-	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Energy.")";
-	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Energy.")";
-	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Energy.")";
-	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Energy.")";
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Energy.")";
+	}
+	unset($value);
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -439,16 +384,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
 		goto error;
 	}
 	$result = $xrlFunction($Theta);
-	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Theta.")";
-	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Theta.")";
-	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Theta.")";
-	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Theta.")";
-	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Theta.")";
-	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Theta.")";
-	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Theta.")";
-	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Theta.")";
-	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Theta.")";
-	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Theta.")";
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Theta.")";
+	}
+	unset($value);
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -469,16 +408,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" ||
 		goto error;
 	}
 	$result = $xrlFunction($Energy, $Theta);
-	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Energy.", ".$Theta.")";
-	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Energy.", ".$Theta.")";
-	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Energy.", ".$Theta.")";
-	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Energy.", ".$Theta.")";
-	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Energy.", ".$Theta.")";
-	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Energy.", ".$Theta.")";
-	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Energy.", ".$Theta.")";
-	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Energy.", ".$Theta.")";
-	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Energy.", ".$Theta.")";
-	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Energy.", ".$Theta.")";
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Energy.", ".$Theta.")";
+	}
+	unset($value);
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -510,29 +443,17 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $Energy, $Theta);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION,  "C")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION,  "Fortran")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION,  "Perl")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION,  "IDL")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION,  "Python")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION,  "Java")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION,  "Csharp")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION,  "Lua")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION,  "Ruby")."(".$Element.", ".$Energy.", ".$Theta.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION,  "PHP")."(".$Element.", ".$Energy.", ".$Theta.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION,  $key)."(".$Element.", ".$Energy.", ".$Theta.")";
+		}
+		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy, $Theta);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$Energy.", ".$Theta.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$Energy.", ".$Theta.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$Energy.", ".$Theta.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$Energy.", ".$Theta.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$Energy.", ".$Theta.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$Energy.", ".$Theta.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$Energy.", ".$Theta.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$Energy.", ".$Theta.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$Energy.", ".$Theta.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$Energy.", ".$Theta.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".$Energy.", ".$Theta.")";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -559,16 +480,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
 		goto error;
 	}
 	$result = $xrlFunction($Theta, $Phi);
-	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Theta.", ".$Phi.")";
-	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Theta.", ".$Phi.")";
-	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Theta.", ".$Phi.")";
-	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Theta.", ".$Phi.")";
-	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Theta.", ".$Phi.")";
-	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Theta.", ".$Phi.")";
-	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Theta.", ".$Phi.")";
-	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Theta.", ".$Phi.")";
-	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Theta.", ".$Phi.")";
-	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Theta.", ".$Phi.")";
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Theta.", ".$Phi.")";
+	}
+	unset($value);
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -592,16 +507,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 		goto error;
 	}
 	$result = $xrlFunction($Energy, $Theta, $Phi);
-	$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Energy.", ".$Theta.", ".$Phi.")";
-	$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Energy.", ".$Theta.", ".$Phi.")";
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Energy.", ".$Theta.", ".$Phi.")";
+	}
+	unset($value);
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
@@ -630,29 +539,17 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $Energy, $Theta, $Phi);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		}
+		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy, $Theta, $Phi);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$Energy.", ".$Theta.", ".$Phi.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".$Energy.", ".$Theta.", ".$Phi.")";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -678,29 +575,17 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "FF_Rayl" ||
 	}
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $MomentumTransfer);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".$MomentumTransfer.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".$MomentumTransfer.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".$MomentumTransfer.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".$MomentumTransfer.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".$MomentumTransfer.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".$MomentumTransfer.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".$MomentumTransfer.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".$MomentumTransfer.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".$MomentumTransfer.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".$MomentumTransfer.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".$MomentumTransfer.")";
+		}
+		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $MomentumTransfer);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$MomentumTransfer.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$MomentumTransfer.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$MomentumTransfer.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$MomentumTransfer.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$MomentumTransfer.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$MomentumTransfer.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$MomentumTransfer.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$MomentumTransfer.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$MomentumTransfer.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$MomentumTransfer.")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".$MomentumTransfer.")";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -716,29 +601,17 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CosKronTransProb") {
 	$realCKTrans = constant($CKTrans);
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $realCKTrans);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "C").")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Fortran").")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Perl").")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "IDL").")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Python").")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Java").")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Csharp").")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Lua").")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "Ruby").")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, "PHP").")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($CKTrans, XRL_MACRO, $key).")";
+		}
+		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realCKTrans);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".expand_entity($CKTrans, XRL_MACRO, "C").")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".expand_entity($CKTrans, XRL_MACRO, "Fortran").")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".expand_entity($CKTrans, XRL_MACRO, "Perl").")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".expand_entity($CKTrans, XRL_MACRO, "IDL").")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".expand_entity($CKTrans, XRL_MACRO, "Python").")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".expand_entity($CKTrans, XRL_MACRO, "Java").")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".expand_entity($CKTrans, XRL_MACRO, "Csharp").")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".expand_entity($CKTrans, XRL_MACRO, "Lua").")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".expand_entity($CKTrans, XRL_MACRO, "Ruby").")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".expand_entity($CKTrans, XRL_MACRO, "PHP").")";
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($CKTrans, XRL_MACRO, $key).")";
+		}
+		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -933,16 +806,16 @@ echo $result,$unit;
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'Ruby') { ?>selected="true" <?php }; ?>value="Ruby">Ruby</option>
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'PHP') { ?>selected="true" <?php }; ?>value="PHP">PHP</option>
 </select> as:</p>
-<div id="codeExampleC" style=<?php echo $codeExampleCStyle;?>><?php $geshi = new GeSHi($commandC, "c"); echo $geshi->parse_code();?></div>
-<div id="codeExampleFortran" style=<?php echo $codeExampleFortranStyle;?>><?php $geshi = new GeSHi($commandFortran, "fortran"); echo $geshi->parse_code();?></div>
-<div id="codeExamplePerl" style=<?php echo $codeExamplePerlStyle;?>><?php $geshi = new GeSHi($commandPerl, "perl"); echo $geshi->parse_code();?></div>
-<div id="codeExampleIDL" style=<?php echo $codeExampleIDLStyle;?>><?php $geshi = new GeSHi($commandIDL, "idl"); echo $geshi->parse_code();?></div>
-<div id="codeExamplePython" style=<?php echo $codeExamplePythonStyle;?>><?php $geshi = new GeSHi($commandPython, "python"); echo $geshi->parse_code();?></div>
-<div id="codeExampleJava" style=<?php echo $codeExampleJavaStyle;?>><?php $geshi = new GeSHi($commandJava, "java"); echo $geshi->parse_code();?></div>
-<div id="codeExampleCsharp" style=<?php echo $codeExampleCsharpStyle;?>><?php $geshi = new GeSHi($commandCsharp, "csharp"); echo $geshi->parse_code();?></div>
-<div id="codeExampleLua" style=<?php echo $codeExampleLuaStyle;?>><?php $geshi = new GeSHi($commandLua, "lua"); echo $geshi->parse_code();?></div>
-<div id="codeExampleRuby" style=<?php echo $codeExampleRubyStyle;?>><?php $geshi = new GeSHi($commandRuby, "ruby"); echo $geshi->parse_code();?></div>
-<div id="codeExamplePHP" style=<?php echo $codeExamplePHPStyle;?>><?php $geshi = new GeSHi($commandPHP, "php"); echo $geshi->parse_code();?></div>
+<div id="codeExampleC" style=<?php echo $codeExampleCStyle;?>><?php $geshi = new GeSHi($commands["C"], "c"); echo $geshi->parse_code();?></div>
+<div id="codeExampleFortran" style=<?php echo $codeExampleFortranStyle;?>><?php $geshi = new GeSHi($commands["Fortran"], "fortran"); echo $geshi->parse_code();?></div>
+<div id="codeExamplePerl" style=<?php echo $codeExamplePerlStyle;?>><?php $geshi = new GeSHi($commands["Perl"], "perl"); echo $geshi->parse_code();?></div>
+<div id="codeExampleIDL" style=<?php echo $codeExampleIDLStyle;?>><?php $geshi = new GeSHi($commands["IDL"], "idl"); echo $geshi->parse_code();?></div>
+<div id="codeExamplePython" style=<?php echo $codeExamplePythonStyle;?>><?php $geshi = new GeSHi($commands["Python"], "python"); echo $geshi->parse_code();?></div>
+<div id="codeExampleJava" style=<?php echo $codeExampleJavaStyle;?>><?php $geshi = new GeSHi($commands["Java"], "java"); echo $geshi->parse_code();?></div>
+<div id="codeExampleCsharp" style=<?php echo $codeExampleCsharpStyle;?>><?php $geshi = new GeSHi($commands["Csharp"], "csharp"); echo $geshi->parse_code();?></div>
+<div id="codeExampleLua" style=<?php echo $codeExampleLuaStyle;?>><?php $geshi = new GeSHi($commands["Lua"], "lua"); echo $geshi->parse_code();?></div>
+<div id="codeExampleRuby" style=<?php echo $codeExampleRubyStyle;?>><?php $geshi = new GeSHi($commands["Ruby"], "ruby"); echo $geshi->parse_code();?></div>
+<div id="codeExamplePHP" style=<?php echo $codeExamplePHPStyle;?>><?php $geshi = new GeSHi($commands["PHP"], "php"); echo $geshi->parse_code();?></div>
 <?php
 echo "Enable support for xraylib in your program using:<br/>";
 //$geshi = new GeSHi(xraylib_enable($Language),strtolower($Language));
@@ -1145,6 +1018,7 @@ function optionCheckFunction(combo) {
 Maintained by <a href="mailto:Tom.Schoonjans@gmail.com">Tom Schoonjans</a><br/>
 Thanks to Prof. Laszlo Vincze of Ghent University for providing the webspace.<br/>
 Built using xraylib <?php echo XRAYLIB_MAJOR.".".XRAYLIB_MINOR?>.
+Development occurs at the <a href="http://github.com/tschoonj/xraylib-web"><i>xraylib-web Github repository</i></a>
 </address>
 </footer>
 </body>
