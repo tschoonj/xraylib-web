@@ -18,6 +18,7 @@ include("xraylib_aux.php");
 //init
 $xrlFunction="LineEnergy";
 $Element="26";
+$ElementOrCompound="FeSO4";
 $Linename="KL3_LINE";
 $LinenameSwitch="IUPAC";
 $Linename1a="K";
@@ -47,6 +48,7 @@ $siegbahnArray = array("KA1", "KA2", "KB1", "KB2", "KB3", "KB4", "KB5",
 "LG1", "LG2", "LG3", "LG4", "LG5", "LG6", "LG8", "LE", "LL", "LS", "LT", "LU", "LV");
 
 $ElementStyle="display:block";
+$ElementOrCompoundStyle="display:none";
 $LinetypeStyle="display:block";
 $ShellStyle="display:none";
 $EnergyStyle="display:none";
@@ -86,9 +88,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET"){
 if (isset($_GET["Element"])) {
 	$Element = $_GET["Element"];
 }
-//if (isset($_GET["Linename"])) {
-//	$Linename= $_GET["Linename"];
-//}
+
+if (isset($_GET["ElementOrCompound"])) {
+	$ElementOrCompound = $_GET["ElementOrCompound"];
+}
 
 if (isset($_GET["Linename1a"])) {
 	$Linename1a = $_GET["Linename1a"];
@@ -349,31 +352,47 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 		$result=0.0;
 		goto error;
 	}
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $Energy);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$Element.", ".$Energy.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$Element.", ".$Energy.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$Element.", ".$Energy.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$Element.", ".$Energy.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$Element.", ".$Energy.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$Element.", ".$Energy.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$Element.", ".$Energy.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$Element.", ".$Energy.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$Element.", ".$Energy.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$Element.", ".$Energy.")";
+	if (is_numeric($ElementOrCompound)) {
+		$result = $xrlFunction($ElementOrCompound, $Energy);
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".$ElementOrCompound.", ".$Energy.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".$ElementOrCompound.", ".$Energy.")";
+	}
+	elseif (SymbolToAtomicNumber($ElementOrCompound) > 0) {
+		#chemical symbol found
+		$result = $xrlFunction(SymbolToAtomicNumber($ElementOrCompound), $Energy);
+		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($ElementOrCompound, "C")."), ".$Energy.")";
+		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($ElementOrCompound, "Fortran")."), ".$Energy.")";
+		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($ElementOrCompound, "Perl")."), ".$Energy.")";
+		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($ElementOrCompound, "IDL")."), ".$Energy.")";
+		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($ElementOrCompound, "Python")."), ".$Energy.")";
+		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($ElementOrCompound, "Java")."), ".$Energy.")";
+		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($ElementOrCompound, "Csharp")."), ".$Energy.")";
+		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($ElementOrCompound, "Lua")."), ".$Energy.")";
+		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($ElementOrCompound, "Ruby")."), ".$Energy.")";
+		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($ElementOrCompound, "PHP")."), ".$Energy.")";
 	}
 	else {
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy);
-		$commandC = expand_entity($xrlFunction, XRL_FUNCTION, "C")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "C")."(".stringify($Element, "C")."), ".$Energy.")";
-		$commandFortran = expand_entity($xrlFunction, XRL_FUNCTION, "Fortran")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Fortran")."(".stringify($Element, "Fortran")."), ".$Energy.")";
-		$commandPerl = expand_entity($xrlFunction, XRL_FUNCTION, "Perl")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Perl")."(".stringify($Element, "Perl")."), ".$Energy.")";
-		$commandIDL = expand_entity($xrlFunction, XRL_FUNCTION, "IDL")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "IDL")."(".stringify($Element, "IDL")."), ".$Energy.")";
-		$commandPython = expand_entity($xrlFunction, XRL_FUNCTION, "Python")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Python")."(".stringify($Element, "Python")."), ".$Energy.")";
-		$commandJava = expand_entity($xrlFunction, XRL_FUNCTION, "Java")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Java")."(".stringify($Element, "Java")."), ".$Energy.")";
-		$commandCsharp = expand_entity($xrlFunction, XRL_FUNCTION, "Csharp")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Csharp")."(".stringify($Element, "Csharp")."), ".$Energy.")";
-		$commandLua = expand_entity($xrlFunction, XRL_FUNCTION, "Lua")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Lua")."(".stringify($Element, "Lua")."), ".$Energy.")";
-		$commandRuby = expand_entity($xrlFunction, XRL_FUNCTION, "Ruby")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "Ruby")."(".stringify($Element, "Ruby")."), ".$Energy.")";
-		$commandPHP = expand_entity($xrlFunction, XRL_FUNCTION, "PHP")."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, "PHP")."(".stringify($Element, "PHP")."), ".$Energy.")";
+		#compound then maybe...		
+		$xrlFunction_cp = $xrlFunction."_CP";
+		$result = $xrlFunction_cp($ElementOrCompound, $Energy);
+		$commandC = expand_entity($xrlFunction_cp, XRL_FUNCTION, "C")."(".stringify($ElementOrCompound, "C").", ".$Energy.")";
+		$commandFortran = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Fortran")."(".stringify($ElementOrCompound, "Fortran").", ".$Energy.")";
+		$commandPerl = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Perl")."(".stringify($ElementOrCompound, "Perl").", ".$Energy.")";
+		$commandIDL = expand_entity($xrlFunction_cp, XRL_FUNCTION, "IDL")."(".stringify($ElementOrCompound, "IDL").", ".$Energy.")";
+		$commandPython = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Python")."(".stringify($ElementOrCompound, "Python").", ".$Energy.")";
+		$commandJava = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Java")."(".stringify($ElementOrCompound, "Java").", ".$Energy.")";
+		$commandCsharp = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Csharp")."(".stringify($ElementOrCompound, "Csharp").", ".$Energy.")";
+		$commandLua = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Lua")."(".stringify($ElementOrCompound, "Lua").", ".$Energy.")";
+		$commandRuby = expand_entity($xrlFunction_cp, XRL_FUNCTION, "Ruby")."(".stringify($ElementOrCompound, "Ruby").", ".$Energy.")";
+		$commandPHP = expand_entity($xrlFunction_cp, XRL_FUNCTION, "PHP")."(".stringify($ElementOrCompound, "PHP").", ".$Energy.")";
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
@@ -385,7 +404,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 		$unit=" cm<sup>2</sup>/g";
 	}
 	display_none_all();
-	$ElementStyle="display:block";
+	$ElementOrCompoundStyle="display:block";
 	$EnergyStyle="display:block";
 	$codeExampleStyle="display:block";
 
@@ -794,6 +813,9 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <div id="element" style="<?php echo $ElementStyle;?>">
   Element: <input type="text" name="Element" value="<?php echo $Element;?>"/>
   </div>
+  <div id="elementOrCompound" style="<?php echo $ElementOrCompoundStyle;?>">
+  Element or Compound: <input type="text" name="ElementOrCompound" value="<?php echo $ElementOrCompound;?>"/>
+  </div>
   <div id="linetype" style="<?php echo $LinetypeStyle;?>">
   <table border="0" style="border-spacing:0px">
   <tr>
@@ -967,6 +989,7 @@ function displayNoneAllLanguage() {
 
 function displayNoneAllFunction() {
 	document.getElementById("element").style.display= "none";
+	document.getElementById("elementOrCompound").style.display= "none";
 	document.getElementById("linetype").style.display= "none";
 	document.getElementById("shell").style.display= "none";
 	document.getElementById("energy").style.display= "none";
@@ -1075,7 +1098,7 @@ function optionCheckFunction(combo) {
       selectedValue === "CSb_Compt" ||
       selectedValue === "CS_Energy") {
 	document.getElementById("energy").style.display= "block";
-	document.getElementById("element").style.display= "block";
+	document.getElementById("elementOrCompound").style.display= "block";
     } else if (selectedValue === "CS_KN") {
 	document.getElementById("energy").style.display= "block";
     } else if (selectedValue === "DCS_Thoms") {
