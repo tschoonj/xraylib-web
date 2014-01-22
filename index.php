@@ -360,6 +360,40 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 	$codeExampleStyle="display:block";
 
 }
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "Fi" || 
+	$xrlFunction == "Fii"
+	)) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+		$result=0.0;
+		goto error;
+	}
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $Energy);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".$Energy.")";
+		}
+		unset($value);
+	}
+	else {
+		#chemical symbol found
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".$Energy.")";
+		}
+		unset($value);
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+	}
+	if (substr($xrlFunction,0,2) == "Fi"){
+		$unit="";
+	}
+	display_none_all();
+	$ElementStyle="display:block";
+	$EnergyStyle="display:block";
+	$codeExampleStyle="display:block";
+
+}
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
@@ -441,17 +475,26 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 		$result=0.0;
 		goto error;
 	}
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $Energy, $Theta);
+	if (is_numeric($ElementOrCompound)) {
+		$result = $xrlFunction($ElementOrCompound, $Energy, $Theta);
 		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION,  $key)."(".$Element.", ".$Energy.", ".$Theta.")";
+			$value = expand_entity($xrlFunction, XRL_FUNCTION,  $key)."(".$ElementOrCompound.", ".$Energy.", ".$Theta.")";
+		}
+		unset($value);
+	}
+	elseif (SymbolToAtomicNumber($ElementOrCompound) > 0) {
+		$result = $xrlFunction(SymbolToAtomicNumber($ElementOrCompound), $Energy, $Theta);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($ElementOrCompound, $key)."), ".$Energy.", ".$Theta.")";
 		}
 		unset($value);
 	}
 	else {
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy, $Theta);
+		#compound then maybe...		
+		$xrlFunction_cp = $xrlFunction."_CP";
+		$result = $xrlFunction_cp($ElementOrCompound, $Energy, $Theta);
 		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".$Energy.", ".$Theta.")";
+			$value = expand_entity($xrlFunction_cp, XRL_FUNCTION, $key)."(".stringify($ElementOrCompound, $key).", ".$Energy.", ".$Theta.")";
 		}
 		unset($value);
 	}
@@ -467,7 +510,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	display_none_all();
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
-	$ElementStyle="display:block";
+	$ElementOrCompoundStyle="display:block";
 	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
@@ -537,17 +580,26 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 		$result=0.0;
 		goto error;
 	}
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $Energy, $Theta, $Phi);
+	if (is_numeric($ElementOrCompound)) {
+		$result = $xrlFunction($ElementOrCompound, $Energy, $Theta, $Phi);
 		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".$Energy.", ".$Theta.", ".$Phi.")";
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$ElementOrCompound.", ".$Energy.", ".$Theta.", ".$Phi.")";
+		}
+		unset($value);
+	}
+	elseif (SymbolToAtomicNumber($ElementOrCompound) > 0) {
+		$result = $xrlFunction(SymbolToAtomicNumber($ElementOrCompound), $Energy, $Theta, $Phi);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($ElementOrCompound, $key)."), ".$Energy.", ".$Theta.", ".$Phi.")";
 		}
 		unset($value);
 	}
 	else {
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $Energy, $Theta, $Phi);
+		#compound then maybe...		
+		$xrlFunction_cp = $xrlFunction."_CP";
+		$result = $xrlFunction_cp($ElementOrCompound, $Energy, $Theta, $Phi);
 		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".$Energy.", ".$Theta.", ".$Phi.")";
+			$value = expand_entity($xrlFunction_cp, XRL_FUNCTION, $key)."(".stringify($ElementOrCompound, $key).", ".$Energy.", ".$Theta.", ".$Phi.")";
 		}
 		unset($value);
 	}
@@ -563,7 +615,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	display_none_all();
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
-	$ElementStyle="display:block";
+	$ElementOrCompoundStyle="display:block";
 	$PhiStyle="display:block";
 	$codeExampleStyle="display:block";
 }
@@ -680,6 +732,8 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'JumpFactor') { ?>selected="true" <?php }; ?>value="JumpFactor">Jump factor</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'RadRate') { ?>selected="true" <?php }; ?>value="RadRate">Radiative transition probability</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonEnergy') { ?>selected="true" <?php }; ?>value="ComptonEnergy">Energy after Compton scattering</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Fi') { ?>selected="true" <?php }; ?>value="Fi">Anomalous scattering factor &phi;&prime;</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Fii') { ?>selected="true" <?php }; ?>value="Fii">Anomalous scattering factor &phi;&Prime;</option>
 </select>
 
 <div id="inputParameter">
@@ -987,6 +1041,10 @@ function optionCheckFunction(combo) {
       selectedValue === "DCSb_Compt") {
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("energy").style.display= "block";
+	document.getElementById("elementOrCompound").style.display= "block";
+    } else if (selectedValue === "Fi" ||
+      selectedValue === "Fii") {
+	document.getElementById("energy").style.display= "block";
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "DCSP_Thoms") {
 	document.getElementById("theta").style.display= "block";
@@ -1001,7 +1059,7 @@ function optionCheckFunction(combo) {
       selectedValue === "DCSPb_Compt") {
 	document.getElementById("theta").style.display= "block";
 	document.getElementById("energy").style.display= "block";
-	document.getElementById("element").style.display= "block";
+	document.getElementById("elementOrCompound").style.display= "block";
 	document.getElementById("phi").style.display= "block";
     } else if (selectedValue === "FF_Rayl" ||
       selectedValue === "SF_Compt") {
