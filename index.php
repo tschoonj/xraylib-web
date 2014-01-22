@@ -249,6 +249,51 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	$LinetypeStyle="display:block";
 	$codeExampleStyle="display:block";
 }
+else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Cascade" ||
+	$xrlFunction == "CS_FluorLine_Kissel_Nonradiative_Cascade" ||
+	$xrlFunction == "CS_FluorLine_Kissel_Radiative_Cascade" ||
+	$xrlFunction == "CS_FluorLine_Kissel_no_Cascade"
+	)) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+		$result=0.0;
+		goto error;
+	}
+	if (!is_numeric($Linename)) {
+		//Linename is not an integer, so it should be one of the constants
+		$realLinename = @constant($Linename);
+		if (!isset($realLinename)) {
+			$result=0.0;
+			goto error;
+		}
+	}
+	else {
+		$result=0.0;
+		goto error;
+	}
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $realLinename, $Energy);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Linename, XRL_MACRO, $key).", ".$Energy.")";
+		}
+		unset($value);
+	}
+	else {
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realLinename, $Energy);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Linename, XRL_MACRO, $key).", ".$Energy.")";
+		}
+		unset($value);
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+	}
+	$unit=" cm<sup>2</sup>/g";
+	display_none_all();
+	$ElementStyle="display:block";
+	$LinetypeStyle="display:block";
+	$EnergyStyle="display:block";
+	$codeExampleStyle="display:block";
+}
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$xrlFunction == "FluorYield" ||
 	$xrlFunction == "JumpFactor" ||
@@ -777,6 +822,10 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Fi') { ?>selected="true" <?php }; ?>value="Fi">Anomalous scattering factor &phi;&prime;</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Fii') { ?>selected="true" <?php }; ?>value="Fii">Anomalous scattering factor &phi;&Prime;</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ElectronConfig') { ?>selected="true" <?php }; ?>value="ElectronConfig">Electronic configuration</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_Cascade">X-ray fluorescence production cross section (with full cascade)</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_Radiative_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_Radiative_Cascade">X-ray fluorescence production cross section (with radiative cascade)</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_Nonradiative_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_Nonradiative_Cascade">X-ray fluorescence production cross section (with non-radiative cascade)</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_no_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_no_Cascade">X-ray fluorescence production cross section (without cascade)</option>
 </select>
 
 <div id="inputParameter">
@@ -1060,6 +1109,14 @@ function optionCheckFunction(combo) {
     } else if (selectedValue === "CS_Photo_Partial") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
+	document.getElementById("energy").style.display= "block";
+    } else if (selectedValue === "CS_FluorLine_Kissel_Cascade" ||
+      selectedValue === "CS_FluorLine_Kissel_Nonradiative_Cascade" ||
+      selectedValue === "CS_FluorLine_Kissel_Radiative_Cascade" ||
+      selectedValue === "CS_FluorLine_Kissel_no_Cascade"
+    ) {
+	document.getElementById("element").style.display= "block";
+	document.getElementById("linetype").style.display= "block";
 	document.getElementById("energy").style.display= "block";
     } else if (selectedValue === "AtomicWeight" || selectedValue === "ElementDensity") {
 	document.getElementById("element").style.display= "block";
