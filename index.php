@@ -249,36 +249,39 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	$LinetypeStyle="display:block";
 	$codeExampleStyle="display:block";
 }
-elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
-	$xrlFunction == "FluorYield" ||
-	$xrlFunction == "JumpFactor"
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 	)) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+		$result=0.0;
+		goto error;
+	}
 	$realShell = @constant($Shell);
 	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $realShell);
+		$result = $xrlFunction($Element, $realShell, $Energy);
 		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).")";
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).", ".$Energy.")";
 		}
 		unset($value);
 	}
 	else {
 		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
 		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).")";
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).", ".$Energy.")";
 		}
 		unset($value);
 	}
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	if ($xrlFunction == "EdgeEnergy") {
-		$unit=" keV";
+	if ($xrlFunction == "CS_Photo_Partial") {
+		$unit=" cm<sup>2</sup>/g";
 	}
 	else {
 		$unit="";
 	}
 	display_none_all();
 	$ElementStyle="display:block";
+	$EnergyStyle="display:block";
 	$ShellStyle="display:block";
 	$codeExampleStyle="display:block";
 }
@@ -704,6 +707,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ElementDensity') { ?>selected="true" <?php }; ?>value="ElementDensity">Elemental density</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_Total') { ?>selected="true" <?php }; ?>value="CS_Total">Total absorption cross section</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_Photo') { ?>selected="true" <?php }; ?>value="CS_Photo">Photoionization cross section</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_Photo_Partial') { ?>selected="true" <?php }; ?>value="CS_Photo_Partial">Partial photoionization cross section</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_Rayl') { ?>selected="true" <?php }; ?>value="CS_Rayl">Rayleigh scattering cross section</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_Compt') { ?>selected="true" <?php }; ?>value="CS_Compt">Compton scattering cross section</option>
 <!--  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CSb_Total') { ?>selected="true" <?php }; ?>value="CSb_Total">CSb_Total</option>
@@ -1013,6 +1017,10 @@ function optionCheckFunction(combo) {
       selectedValue === "FluorYield") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
+    } else if (selectedValue === "CS_Photo_Partial") {
+	document.getElementById("element").style.display= "block";
+	document.getElementById("shell").style.display= "block";
+	document.getElementById("energy").style.display= "block";
     } else if (selectedValue === "AtomicWeight" || selectedValue === "ElementDensity") {
 	document.getElementById("element").style.display= "block";
     } else if (selectedValue === "CS_Total" || 
