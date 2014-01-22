@@ -297,6 +297,8 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Ca
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$xrlFunction == "FluorYield" ||
 	$xrlFunction == "JumpFactor" ||
+	$xrlFunction == "AtomicLevelWidth" ||
+	$xrlFunction == "AugerYield" ||
 	$xrlFunction == "ElectronConfig"
 	)) {
 	$realShell = @constant($Shell);
@@ -317,7 +319,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
-	if ($xrlFunction == "EdgeEnergy") {
+	if ($xrlFunction == "EdgeEnergy" || $xrlFunction == "AtomicLevelWidth") {
 		$unit=" keV";
 	}
 	else if ($xrlFunction == "ElectronConfig") {
@@ -826,6 +828,8 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_Radiative_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_Radiative_Cascade">X-ray fluorescence production cross section (with radiative cascade)</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_Nonradiative_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_Nonradiative_Cascade">X-ray fluorescence production cross section (with non-radiative cascade)</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_no_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_no_Cascade">X-ray fluorescence production cross section (without cascade)</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AtomicLevelWidth') { ?>selected="true" <?php }; ?>value="AtomicLevelWidth">Atomic level width</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AugerYield') { ?>selected="true" <?php }; ?>value="AugerYield">Auger yield</option>
 </select>
 
 <div id="inputParameter">
@@ -1103,6 +1107,8 @@ function optionCheckFunction(combo) {
     } else if (selectedValue === "EdgeEnergy" ||
       selectedValue === "JumpFactor" ||
       selectedValue === "FluorYield" ||
+      selectedValue === "AugerYield" ||
+      selectedValue === "AtomicLevelWidth" ||
       selectedValue === "ElectronConfig") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
