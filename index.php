@@ -249,6 +249,44 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	$LinetypeStyle="display:block";
 	$codeExampleStyle="display:block";
 }
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
+	$xrlFunction == "FluorYield" ||
+	$xrlFunction == "JumpFactor" ||
+	$xrlFunction == "ElectronConfig"
+	)) {
+	$realShell = @constant($Shell);
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $realShell);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).")";
+		}
+		unset($value);
+	}
+	else {
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).")";
+		}
+		unset($value);
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+	}
+	if ($xrlFunction == "EdgeEnergy") {
+		$unit=" keV";
+	}
+	else if ($xrlFunction == "ElectronConfig") {
+		$unit =" electrons"; 
+	}
+	else {
+		$unit="";
+	}
+	display_none_all();
+	$ElementStyle="display:block";
+	$ShellStyle="display:block";
+	$codeExampleStyle="display:block";
+	
+	}
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 	)) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
@@ -738,6 +776,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonEnergy') { ?>selected="true" <?php }; ?>value="ComptonEnergy">Energy after Compton scattering</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Fi') { ?>selected="true" <?php }; ?>value="Fi">Anomalous scattering factor &phi;&prime;</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Fii') { ?>selected="true" <?php }; ?>value="Fii">Anomalous scattering factor &phi;&Prime;</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ElectronConfig') { ?>selected="true" <?php }; ?>value="ElectronConfig">Electronic configuration</option>
 </select>
 
 <div id="inputParameter">
@@ -1014,7 +1053,8 @@ function optionCheckFunction(combo) {
 	document.getElementById("linetype").style.display= "block";
     } else if (selectedValue === "EdgeEnergy" ||
       selectedValue === "JumpFactor" ||
-      selectedValue === "FluorYield") {
+      selectedValue === "FluorYield" ||
+      selectedValue === "ElectronConfig") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
     } else if (selectedValue === "CS_Photo_Partial") {
