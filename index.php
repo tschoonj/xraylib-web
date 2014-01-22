@@ -30,6 +30,8 @@ $Theta=1.5707964;
 $Phi=3.14159;
 $MomentumTransfer=0.57032;
 $CKTrans="FL12_TRANS";
+$Density="1.0";
+$PZ="1.0";
 $result="";
 
 $commands = array(
@@ -60,6 +62,8 @@ $ThetaStyle="display:none";
 $PhiStyle="display:none";
 $MomentumTransferStyle="display:none";
 $CKTransStyle="display:none";
+$DensityStyle="display:none";
+$PZStyle="display:none";
 
 
 $Language="C";
@@ -206,6 +210,14 @@ if (isset($_GET["MomentumTransfer"])) {
 if (isset($_GET["CKTrans"])) {
 	$CKTrans=$_GET['CKTrans'];
 }
+
+if (isset($_GET["Density"])) {
+	$Density=$_GET['Density'];
+}
+if (isset($_GET["PZ"])) {
+	$PZ=$_GET['PZ'];
+}
+
 if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	$xrlFunction == "RadRate"
 	)) {
@@ -248,6 +260,43 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	$ElementStyle="display:block";
 	$LinetypeStyle="display:block";
 	$codeExampleStyle="display:block";
+}
+else if (isset($_GET['xrlFunction']) && ($xrlFunction == "Refractive_Index")) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+		$result=0.0;
+		goto error;
+	}
+	if (!is_numeric($Density) || $Energy <= 0.0) {
+		$result=0.0;
+		goto error;
+	}
+	if (is_numeric($ElementOrCompound)) {
+		$result = $xrlFunction(AtomicNumberToSymbol($ElementOrCompound), $Energy, $Density);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("AtomicNumberToSymbol", XRL_FUNCTION, $key)."(".$ElementOrCompound.")".", ".$Energy.", ".$Density.")";
+		}
+		unset($value);
+	}
+	else {
+		$result = $xrlFunction($ElementOrCompound, $Energy, $Density);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".stringify($ElementOrCompound,$key).", ".$Energy.", ".$Density.")";
+		}
+		unset($value);
+	}
+	if ($result["re"] == 0.0 && $result["im"]) {
+		$result=0.0;
+	}
+	else {
+		$result = sprintf("%g + %gi", $result["re"],$result["im"]);
+	}
+	$unit="";
+	display_none_all();
+	$ElementOrCompoundStyle="display:block";
+	$EnergyStyle="display:block";
+	$DensityStyle="display:block";
+	$codeExampleStyle="display:block";
+
 }
 else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Cascade" ||
 	$xrlFunction == "CS_FluorLine_Kissel_Nonradiative_Cascade" ||
@@ -830,6 +879,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_no_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_no_Cascade">X-ray fluorescence production cross section (without cascade)</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AtomicLevelWidth') { ?>selected="true" <?php }; ?>value="AtomicLevelWidth">Atomic level width</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AugerYield') { ?>selected="true" <?php }; ?>value="AugerYield">Auger yield</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Refractive_Index') { ?>selected="true" <?php }; ?>value="Refractive_Index">Refractive index</option>
 </select>
 
 <div id="inputParameter">
@@ -916,7 +966,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   Momentum transfer: <input type="text" name="MomentumTransfer" value="<?php echo $MomentumTransfer;?>"/>
   </div>
   <div id="cktrans" style="<?php echo $CKTransStyle;?>">
-  Transition <select name="CKTrans" id="CKTrans">
+  Transition: <select name="CKTrans" id="CKTrans">
   <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FL12_TRANS') { ?> selected="true" <?php }; ?>value="FL12_TRANS">L1 &rarr; L2</option>
   <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FL13_TRANS') { ?> selected="true" <?php }; ?>value="FL13_TRANS">L1 &rarr; L3</option>
   <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FL23_TRANS') { ?> selected="true" <?php }; ?>value="FL23_TRANS">L2 &rarr; L3</option>
@@ -932,6 +982,13 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['CKTrans']) && $_GET['CKTrans'] == 'FM45_TRANS') { ?> selected="true" <?php }; ?>value="FM45_TRANS">M4 &rarr; M5</option>
   </select>
   </div>
+  <div id="density" style="<?php echo $DensityStyle;?>">
+  Density: <input type="text" name="Density" value="<?php echo $Density;?>"/> g/cm<sup>3</sup>
+  </div>
+  <div id="pz" style="<?php echo $PZStyle;?>">
+  p<sub>z</sub>: <input type="text" name="PZ" value="<?php echo $PZ;?>"/>
+  </div>
+
 </div>
 <br/>
 <input type="submit" name="submit" value="Go!">
@@ -1020,6 +1077,8 @@ function displayNoneAllFunction() {
 	document.getElementById("phi").style.display= "none";
 	document.getElementById("momentumtransfer").style.display= "none";
 	document.getElementById("cktrans").style.display= "none";
+	document.getElementById("density").style.display= "none";
+	document.getElementById("pz").style.display= "none";
 }
 
 function optionCheckLanguage(combo) {
@@ -1179,6 +1238,10 @@ function optionCheckFunction(combo) {
     } else if (selectedValue === "CosKronTransProb") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("cktrans").style.display= "block";
+    } else if (selectedValue === "Refractive_Index") {
+	document.getElementById("energy").style.display= "block";
+	document.getElementById("elementOrCompound").style.display= "block";
+	document.getElementById("density").style.display= "block";
     }
 }
 </script>

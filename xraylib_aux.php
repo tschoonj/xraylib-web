@@ -125,6 +125,8 @@ function display_none_all(){
 	global $LinetypeStyle;
 	global $MomentumTransferStyle;
 	global $CKTransStyle;
+	global $DensityStyle;
+	global $PZStyle;
 
 	$ElementStyle="display:none";
 	$ElementOrCompoundStyle="display:none";
@@ -135,6 +137,8 @@ function display_none_all(){
 	$LinetypeStyle="display:none";
 	$MomentumTransferStyle="display:none";
 	$CKTransStyle="display:none";
+	$DensityStyle="display:none";
+	$PZStyle="display:none";
 }
 
 ?>
