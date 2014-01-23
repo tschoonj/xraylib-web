@@ -531,6 +531,66 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "Fi" ||
 	$codeExampleStyle="display:block";
 
 }
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile")) {
+	if (!is_numeric($PZ) || $PZ < 0.0 || $Energy > 100.0) {
+		$result=0.0;
+		goto error;
+	}
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $PZ);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".$PZ.")";
+		}
+		unset($value);
+	}
+	else {
+		#chemical symbol found
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $PZ);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".$PZ.")";
+		}
+		unset($value);
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+	}
+	$unit="";
+	display_none_all();
+	$ElementStyle="display:block";
+	$PZStyle="display:block";
+	$codeExampleStyle="display:block";
+}
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial")) {
+	$realShell = @constant($Shell);
+	if (!is_numeric($PZ) || $PZ < 0.0 || $Energy > 100.0) {
+		$result=0.0;
+		goto error;
+	}
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $realShell, $PZ);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).", ".$PZ.")";
+		}
+		unset($value);
+	}
+	else {
+		#chemical symbol found
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell, $PZ);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).", ".$PZ.")";
+		}
+		unset($value);
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+	}
+	$unit="";
+	display_none_all();
+	$ElementStyle="display:block";
+	$PZStyle="display:block";
+	$ShellStyle="display:block";
+	$codeExampleStyle="display:block";
+}
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
@@ -880,6 +940,8 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AtomicLevelWidth') { ?>selected="true" <?php }; ?>value="AtomicLevelWidth">Atomic level width</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AugerYield') { ?>selected="true" <?php }; ?>value="AugerYield">Auger yield</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Refractive_Index') { ?>selected="true" <?php }; ?>value="Refractive_Index">Refractive index</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile') { ?>selected="true" <?php }; ?>value="ComptonProfile">Compton broadening profile</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile_Partial') { ?>selected="true" <?php }; ?>value="ComptonProfile_Partial">Partial Compton broadening profile</option>
 </select>
 
 <div id="inputParameter">
@@ -986,7 +1048,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   Density: <input type="text" name="Density" value="<?php echo $Density;?>"/> g/cm<sup>3</sup>
   </div>
   <div id="pz" style="<?php echo $PZStyle;?>">
-  p<sub>z</sub>: <input type="text" name="PZ" value="<?php echo $PZ;?>"/>
+  Electron momentum p<sub>z</sub>: <input type="text" name="PZ" value="<?php echo $PZ;?>"/>
   </div>
 
 </div>
@@ -1242,8 +1304,16 @@ function optionCheckFunction(combo) {
 	document.getElementById("energy").style.display= "block";
 	document.getElementById("elementOrCompound").style.display= "block";
 	document.getElementById("density").style.display= "block";
+    } else if (selectedValue === "ComptonProfile") {
+	document.getElementById("element").style.display= "block";
+	document.getElementById("pz").style.display= "block";
+    } else if (selectedValue === "ComptonProfile_Partial") {
+	document.getElementById("element").style.display= "block";
+	document.getElementById("shell").style.display= "block";
+	document.getElementById("pz").style.display= "block";
     }
 }
+
 </script>
 <footer>
 <address>
