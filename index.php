@@ -871,7 +871,27 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CosKronTransProb") {
 	$CKTransStyle="display:block";
 	$codeExampleStyle="display:block";
 }
+elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetCompoundDataNISTList") {
+	$nistCompounds = GetCompoundDataNISTList();
+	$result = "";
+	for ($i = 0 ; $i < count($nistCompounds) ; $i++) {
+	        $result .= sprintf("  Compound %d: %s<br/>", $i, $nistCompounds[$i]);
+	}
 
+	foreach ($commands as $key => &$value) {
+		if ($key == "C") {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(NULL)";
+		}
+		else {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."()";
+		}
+	}
+	unset($value);
+	$unit="";
+	display_none_all();
+	$codeExampleStyle="display:block";
+	goto past_error;
+}
 //error handling
 error:
 if (isset($_GET['xrlFunction']) && $result == 0.0) {
@@ -880,6 +900,7 @@ if (isset($_GET['xrlFunction']) && $result == 0.0) {
 	$command = "";
 	$codeExampleStyle="display:none";
 }
+past_error:
 }
 ?>
 
@@ -942,6 +963,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Refractive_Index') { ?>selected="true" <?php }; ?>value="Refractive_Index">Refractive index</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile') { ?>selected="true" <?php }; ?>value="ComptonProfile">Compton broadening profile</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile_Partial') { ?>selected="true" <?php }; ?>value="ComptonProfile_Partial">Partial Compton broadening profile</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetCompoundDataNISTList') { ?>selected="true" <?php }; ?>value="GetCompoundDataNISTList">List of NIST catalog compounds</option>
 </select>
 
 <div id="inputParameter">
@@ -1311,6 +1333,8 @@ function optionCheckFunction(combo) {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
 	document.getElementById("pz").style.display= "block";
+    }  else if (selectedValue === "GetCompoundDataNISTList") {
+	/* do nothing */       
     }
 }
 
