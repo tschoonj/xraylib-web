@@ -32,6 +32,9 @@ $MomentumTransfer=0.57032;
 $CKTrans="FL12_TRANS";
 $Density="1.0";
 $PZ="1.0";
+$AugerTransa="K";
+$AugerTransb="L2";
+$AugerTransc="M3";
 $result="";
 
 $commands = array(
@@ -64,6 +67,7 @@ $MomentumTransferStyle="display:none";
 $CKTransStyle="display:none";
 $DensityStyle="display:none";
 $PZStyle="display:none";
+$AugerTransStyle="display:none";
 
 
 $Language="C";
@@ -126,6 +130,21 @@ if (isset($_GET["LinenameSwitch"])) {
 if (isset($_GET["Shell"])) {
 	$Shell = $_GET["Shell"];
 }
+
+if (isset($_GET["AugerTransa"])) {
+	$AugerTransa = $_GET["AugerTransa"];
+}
+
+if (isset($_GET["AugerTransb"])) {
+	$AugerTransb = $_GET["AugerTransb"];
+}
+
+if (isset($_GET["AugerTransc"])) {
+	$AugerTransc = $_GET["AugerTransc"];
+}
+
+$AugerTrans = $AugerTransa."_".$AugerTransb.$AugerTransc."_AUGER";
+
 if (isset($_GET["xrlFunction"])) {
 	$xrlFunction=$_GET['xrlFunction'];
 }
@@ -259,6 +278,42 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	display_none_all();
 	$ElementStyle="display:block";
 	$LinetypeStyle="display:block";
+	$codeExampleStyle="display:block";
+}
+else if (isset($_GET['xrlFunction']) && ($xrlFunction == "AugerRate")) {
+	if (!is_numeric($AugerTrans)) {
+		//Linename is not an integer, so it should be one of the constants
+		$realAugerTrans = @constant($AugerTrans);
+		if (!isset($realAugerTrans)) {
+			$result=0.0;
+			goto error;
+		}
+	}
+	else {
+		$result=0.0;
+		goto error;
+	}
+	if (is_numeric($Element)) {
+		$result = $xrlFunction($Element, $realAugerTrans);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($AugerTrans, XRL_MACRO, $key).")";
+		}
+		unset($value);
+	}
+	else {
+		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realAugerTrans);
+		foreach ($commands as $key => &$value) {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($AugerTrans, XRL_MACRO, $key).")";
+		}
+		unset($value);
+	}
+	if ($result != 0.0) {
+		$result = sprintf("%g", $result);
+	}
+	$unit="";
+	display_none_all();
+	$ElementStyle="display:block";
+	$AugerTransStyle="display:block";
 	$codeExampleStyle="display:block";
 }
 else if (isset($_GET['xrlFunction']) && ($xrlFunction == "Refractive_Index")) {
@@ -960,6 +1015,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CS_FluorLine_Kissel_no_Cascade') { ?>selected="true" <?php }; ?>value="CS_FluorLine_Kissel_no_Cascade">X-ray fluorescence production cross section (without cascade)</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AtomicLevelWidth') { ?>selected="true" <?php }; ?>value="AtomicLevelWidth">Atomic level width</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AugerYield') { ?>selected="true" <?php }; ?>value="AugerYield">Auger yield</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'AugerRate') { ?>selected="true" <?php }; ?>value="AugerRate">Auger rate</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'Refractive_Index') { ?>selected="true" <?php }; ?>value="Refractive_Index">Refractive index</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile') { ?>selected="true" <?php }; ?>value="ComptonProfile">Compton broadening profile</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile_Partial') { ?>selected="true" <?php }; ?>value="ComptonProfile_Partial">Partial Compton broadening profile</option>
@@ -972,6 +1028,47 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   </div>
   <div id="elementOrCompound" style="<?php echo $ElementOrCompoundStyle;?>">
   Element or Compound: <input type="text" name="ElementOrCompound" value="<?php echo $ElementOrCompound;?>"/>
+  </div>
+  <div id="augertrans" style="<?php echo $AugerTransStyle;?>">
+   Excited shell: <select name="AugerTransa" id="AugerTransa" onchange="AugerTransaChanged(this)">
+	<?php 
+		foreach (array_slice($shellsArray, 0, 8) as $shell) {
+			echo "<option value=\"$shell\"";
+			if ($AugerTransa == $shell) {
+				echo "selected=\"true\" ";
+			}
+			echo "> $shell</option>";
+		}
+	?>
+   </select><br/>
+   Transition shell: <select name="AugerTransb" id="AugerTransb" onchange="AugerTransbChanged(this)">
+	<?php
+		$res = array_search($AugerTransa, $shellsArray, true);
+		$slice = array_slice($shellsArray, $res+1,9-$res-1);
+		$i = 0;
+		foreach ($slice as $shell) {
+			echo "<option value=\"$shell\"";
+			if (($i++ == 0 && array_search($AugerTransb, $slice) === FALSE) || $AugerTransb == $shell) {
+				echo "selected=\"true\" ";
+			}
+			echo "> $shell</option>";
+		}
+	?>
+   </select><br/>
+   Auger electron shell: <select name="AugerTransc" id="AugerTransc">
+	<?php
+		$res = array_search($AugerTransb, $shellsArray, true);
+		$slice = array_slice($shellsArray, $res);
+		$i = 0;
+		foreach ($slice as $shell) {
+			echo "<option value=\"$shell\"";
+			if (($i++ == 0 && array_search($AugerTransc, $slice) === FALSE) || $AugerTransc == $shell) {
+				echo "selected=\"true\" ";
+			}
+			echo "> $shell</option>";
+		}
+	?>
+   </select><br/>
   </div>
   <div id="linetype" style="<?php echo $LinetypeStyle;?>">
   <table border="0" style="border-spacing:0px">
@@ -1163,6 +1260,7 @@ function displayNoneAllFunction() {
 	document.getElementById("cktrans").style.display= "none";
 	document.getElementById("density").style.display= "none";
 	document.getElementById("pz").style.display= "none";
+	document.getElementById("augertrans").style.display= "none";
 }
 
 function optionCheckLanguage(combo) {
@@ -1238,6 +1336,54 @@ function Linename1aChanged(Linename1a) {
     }
 } 
 
+function AugerTransaChanged(AugerTransa) {
+    var shellsArray = ["K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "P1", "P2", "P3", "P4", "P5", "Q1", "Q2", "Q3"];
+
+    var AugerTransb = document.getElementById("AugerTransb");
+    //get selected value
+    var selected = AugerTransb.options[AugerTransb.selectedIndex].value;
+
+    //clear AugerTransb
+    AugerTransb.options.length = 0;
+    var res = shellsArray.indexOf(AugerTransa.options[AugerTransa.selectedIndex].value);
+    var match = false;
+    for (var i = res+1 ; i < 9 ; i++) {
+    	AugerTransb.options.add(new Option(shellsArray[i], shellsArray[i]));
+	if (shellsArray[i] == selected) {
+		AugerTransb.options[i-res-1].selected = true;
+		match = true;
+	}
+    }
+    if (match == false) {
+        //select the first option if previously selected value is not found
+	AugerTransb.options[0].selected = true;
+    }
+    AugerTransbChanged(AugerTransb);
+} 
+
+function AugerTransbChanged(AugerTransb) {
+    var shellsArray = ["K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "P1", "P2", "P3", "P4", "P5", "Q1", "Q2", "Q3"];
+
+    var AugerTransc = document.getElementById("AugerTransc");
+    //get selected value
+    var selected = AugerTransc.options[AugerTransc.selectedIndex].value;
+
+    //clear AugerTransb
+    AugerTransc.options.length = 0;
+    var res = shellsArray.indexOf(AugerTransb.options[AugerTransb.selectedIndex].value);
+    var match = false;
+    for (var i = res ; i < shellsArray.length ; i++) {
+    	AugerTransc.options.add(new Option(shellsArray[i], shellsArray[i]));
+	if (shellsArray[i] == selected) {
+		AugerTransc.options[i-res].selected = true;
+		match = true;
+	}
+    }
+    if (match == false) {
+        //select the first option if previously selected value is not found
+	AugerTransc.options[0].selected = true;
+    }
+} 
 function optionCheckFunction(combo) {
     /*jslint browser:true */
     var selectedValue = combo.options[combo.selectedIndex].value;
@@ -1333,8 +1479,11 @@ function optionCheckFunction(combo) {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
 	document.getElementById("pz").style.display= "block";
-    }  else if (selectedValue === "GetCompoundDataNISTList") {
+    } else if (selectedValue === "GetCompoundDataNISTList") {
 	/* do nothing */       
+    } else if (selectedValue === "AugerRate") {
+	document.getElementById("element").style.display= "block";
+	document.getElementById("augertrans").style.display= "block";
     }
 }
 

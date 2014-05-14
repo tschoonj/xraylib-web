@@ -127,6 +127,7 @@ function display_none_all(){
 	global $CKTransStyle;
 	global $DensityStyle;
 	global $PZStyle;
+	global $AugerTransStyle;
 
 	$ElementStyle="display:none";
 	$ElementOrCompoundStyle="display:none";
@@ -139,6 +140,7 @@ function display_none_all(){
 	$CKTransStyle="display:none";
 	$DensityStyle="display:none";
 	$PZStyle="display:none";
+	$AugerTransStyle="display:none";
 }
 
 ?>
