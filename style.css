@@ -1,0 +1,412 @@
+/**
+ * UGent-Drupal
+ *
+ * Theme in UGent style, multi-column, tableless, configurable colours (faculty style)
+ * Initially developed for 10th FirW PhD Symposium 2009
+ * CSS by Peter Bertels, theme inspired by http://www.ugent.be/ge/nl/mobiliteit
+ */
+
+body {
+  padding: 0;
+  margin: 20px;
+  background: #e9ebf0;
+  font-family: Verdana, Arial, Helvetica, sans;
+  font-size: 80%;
+}
+
+body img.admin-menu-icon { display: none; }
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0 0 0.5ex 0;
+  padding: 0;
+}
+
+#wrapper {
+  padding: 0;
+  margin: 0 auto;
+  width: 90%;
+  min-width: 750px;
+  max-width: 1200px;
+  background: #fff;
+  border-left: 1px solid #e4e6eb;
+  border-right: 1px solid #e4e6eb;
+}
+
+#w3 {
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid #d0d2d7;
+  border-right: 1px solid #d0d2d7;
+}
+
+#w2 {
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid #d9dadf;
+  border-right: 1px solid #d9dadf;
+}
+
+#w1 {
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid #dfe1e6;
+  border-right: 1px solid #dfe1e6;
+}
+
+#header {
+  position: relative;
+  min-height: 120px;
+  background: top repeat-x;
+}
+
+#header img.logo {
+  float: left;
+}
+
+#faculty {
+  margin: 0 0 0 22%;
+}
+
+#faculty div.site-name p {
+  margin: 0 0 0.75em 0;
+  padding: 0;
+  font-size: 125%;
+  font-weight: bold;
+}
+
+#faculty div.site-name p a, #faculty div.site-name p a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+#faculty p.breadcrumb {
+  color: #777;
+  font-size: 85%;
+  margin: 0;
+  padding: 0;
+}
+
+img.lager {
+  position: relative;
+  top: 2px;
+}
+
+#footer {
+  font-size: 85%;
+  padding: 0.5em 2em;
+  clear: both;
+}
+
+#footer p {
+  margin: 0.25em 0;
+  padding: 0;
+}
+
+a {
+  color: #369;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #69c;
+  text-decoration: underline;
+}
+
+#left-sidebar {
+  clear: both;
+  float: left;
+  width: 22%;
+  margin: 0;
+  padding: 0;
+}
+
+#left-sidebar div {
+  margin: 0 1em;
+  padding: 0;
+}
+
+#right-sidebar {
+  float: right;
+  width: 22%;
+  margin: 0;
+  padding: 0;
+}
+
+#right-sidebar div {
+  margin: 0 1em;
+  padding: 0;
+}
+
+#content {
+  float: left;
+  min-height: 500px;
+  margin: 0;
+}
+
+body #content {
+  width: 100%;
+  padding: 0 1.5em 1.5em 1.5em;
+}
+
+body.sidebars #content {
+  width: 52%;
+  padding: 0 0 1.5em 0;
+}
+
+body.sidebar-left #content {
+  width: 75%;
+  padding: 0 1.5em 1.5em 0;
+}
+
+body.sidebar-right #content {
+  clear: both;
+  width: 75%;
+  padding: 0 0 1.5em 1.5em;
+}
+
+#content h1 {
+  color: #369;
+  font-size: 140%;
+  font-weight: bold;
+}
+
+#content h2 {
+  color: #369;
+  font-size: 125%;
+  line-height: 140%;
+  font-weight: normal;
+  border-bottom: 1px solid #ccc;
+}
+
+
+/* Language bar and login status */
+.block-locale h2 { display: none; }
+.block-locale ul, #login-status ul {
+  margin: 0;
+  padding: 0;
+}
+.block-locale ul li, #login-status ul li {
+  display: inline;
+  list-style-type: none;
+  padding: 0 0.15em 0 0.5em;
+  border-left: 0.2ex solid #777;
+}
+.block-locale ul li.first, #login-status ul li.first {
+  border-left: none;
+}
+
+.block-locale, #login-status {
+  background: #fff;
+  margin: 0;
+  padding: 0.2em;
+  position: absolute;
+  top: 1.5em;
+}
+
+.block-locale {
+  left: 1em;
+}
+#login-status {
+  right: 1em;
+}
+
+
+/* Search box and secondary */
+#search-inline {
+  float: right;
+  margin: -3px 1em 0 0;
+}
+#search-inline label {
+  display: none;
+}
+
+
+/* Menu in left sidebar */
+div.left-or-right-sidebar ul.menu, div.left-or-right-sidebar ul.menu li, div.left-or-right-sidebar ul.menu li ul, div.left-or-right-sidebar ul.menu li ul li { /* all */
+  list-style-type: none;
+  list-style-image: none;
+}
+
+div.left-or-right-sidebar ul.menu a, div.left-or-right-sidebar ul.menu a:hover { /* all */
+  text-decoration: none;
+  display: block;
+}
+div.left-or-right-sidebar ul.menu a.active { /* all */
+  color: #369;
+}
+
+
+div.left-or-right-sidebar ul.menu { /* level 0 */
+  margin: 0 0 0.5em 0;
+  padding: 0;
+}
+div.left-or-right-sidebar ul.menu ul { /* level 1 */
+  margin: 0;
+  padding: 0;
+}
+div.left-or-right-sidebar ul.menu ul ul { /* level 2+ */
+  margin: 0;
+  padding: 0 0 0 1.5em;
+}
+
+div.left-or-right-sidebar ul.menu li { /* all */
+  display: block;
+  margin: 0 0 1px 0;
+  padding: 0;
+}
+
+div.left-or-right-sidebar ul.menu li.active-trail { /* level 0 */
+  border: 2px solid;
+}
+div.left-or-right-sidebar ul.menu li.active-trail li { /* level 1+ */
+  border: none;
+}
+
+div.left-or-right-sidebar ul.menu li a { /* level 0 */
+  background: url('../images/menu-level0.png') no-repeat 5px 8px;
+  margin: 0;
+  padding: 0.4em 0 0.4em 20px;
+}
+div.left-or-right-sidebar ul.menu li.collapsed a { /* level 0 */
+  background-image: url('../images/menu-level0-collapsed.png');
+}
+div.left-or-right-sidebar ul.menu li.expanded a { /* level 0 */
+  background-image: url('../images/menu-level0-expanded.png');
+}
+div.left-or-right-sidebar ul.menu li.expanded li a { /* level 1+ */
+  background-image: url('../images/menu-level1-expanded.png');
+}
+div.left-or-right-sidebar ul.menu li.expanded li.leaf a { /* level 1+ */
+  background-image: url('../images/menu-level1-leaf.png');
+}
+div.left-or-right-sidebar ul.menu li.expanded li.collapsed a { /* level 1+ */
+  background-image: url('../images/menu-level1-collapsed.png');
+}
+
+div.left-or-right-sidebar ul.menu ul, div.left-or-right-sidebar ul.menu li { /* level 0 */
+  background: #dcdfe4;
+}
+div.left-or-right-sidebar ul.menu ul ul, div.left-or-right-sidebar ul.menu ul li { /* level 1+ */
+  background: #f5f5f5;
+}
+
+div.left-or-right-sidebar ul.menu li { /* level 0 */
+  font-weight: bold;
+}
+div.left-or-right-sidebar ul.menu li li { /* level 1+ */
+  font-weight: normal;
+}
+
+
+
+
+/* Primary links */
+#primary a:hover, #primary a.active:hover {
+  color: #69c;
+  text-decoration: none;
+}
+#primary a.active {
+  color: #369;
+}
+#primary ul {
+  margin: 0 1em;
+}
+#primary ul li {
+  display: block;
+  margin: 0.7em 0;
+  padding: 0.3em 1em;
+  background: url('../images/facet.png') repeat-x bottom;
+  border: 1px solid #dcdfe4;
+}
+#primary ul li.active {
+  background: url('../images/facet-active.png') repeat-x bottom;
+}
+
+
+/* Secondary links */
+#secondary-top {
+  font-size: 85%;
+  padding-top: 3px;
+}
+#secondary-top, #secondary-bottom {
+  float: right;
+  margin: 0 1em 0 0;
+}
+#secondary-top ul, #secondary-bottom ul {
+  margin: 0;
+  padding: 0;
+}
+#secondary-top ul li, #secondary-bottom ul li {
+  display: inline;
+  list-style-type: none;
+  padding: 0 0.15em 0 0.5em;
+}
+#secondary-top ul li {
+  border-left: 0.2ex solid;
+}
+#secondary-top ul li.first {
+  border-left: none;
+}
+
+
+/* Messages (status and error) */
+.messages {
+  margin: 1em 0;
+  padding: 1em;
+  border: 2px solid;
+}
+
+div .status {
+  background: #dfd;
+  border-color: #0a0;
+}
+
+div .error {
+  background: #fdd;
+  border-color: #a00;
+}
+
+
+/* Read more and translation */
+ul.inline li.node_read_more {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+ul.inline li.node_translation_en, ul.inline li.node_translation_nl {
+  display: none;
+}
+
+/* Tables */
+#content table {
+  margin: 0.8em 0 1.5em 0;
+}
+#content th, #content td {
+  padding: 0.4em 0.5em 0.6em 0.5em;
+  border: 0;
+  vertical-align: top;
+}
+#content thead th {
+  /*  background: #369; */
+  background: #fab91c;
+  color: #fff;
+  border: 1px solid #fff;
+}
+#content tbody tr {
+  background: none;
+  border-bottom: 1px solid #369;
+}
+#content tbody td.active {
+  background: #edeff1;
+}
+
+div .block-banner {
+  position: relative;
+  left: -1em;
+}
+
+div .block-banner div {
+  width: 210px;
+}
+
+

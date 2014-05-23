@@ -3,7 +3,7 @@
 <html lang=en>
 <head>
 <title>xraylib online calculator</title>
-
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 <?php 
@@ -965,7 +965,9 @@ past_error:
 <br/>
 <p>Through the interface provided here, you should be able to perform simple queries from the database. With the instructions provided in the <a href="http://github.com/tschoonj/xraylib/wiki"><i>online manual</i></a>, you will be able to integrate similar queries directly into your own applications using one of the bindings we offer.</p>
 <br/>
-<p>This website is currently under construction, and will be expanded soon over the next couple of weeks. The goal is to make all functions that make up the <i>xraylib</i> API, available through this interface.</p>
+<p><i>xraylib</i> is the result of an ongoing research collaboration between the <a href="http://www.esrf.eu">European Synchrotron Radiation Facility (Grenoble, France)</a>, <a href="http://www.ugent.be">Ghent University (Flanders, Belgium)</a> and the <a href="http://www.uniss.it">University of Sassari (Sardinia, Italy)</a>.
+When using this website, or <i>xraylib</i> itself, please cite our <a href="http://dx.doi.org/10.1016/j.sab.2011.09.011">work</a> in your publications.
+</p>
 
 <br/>
 <p>
@@ -1173,7 +1175,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
 </div>
 <br/>
 <input type="submit" name="submit" value="Go!">
-
+<br/><br/>
 <p>
 <?php 
 echo "<h2>Result</h2>";
@@ -1181,8 +1183,11 @@ echo "<p style=\"font-size:20px\">";
 echo $result,$unit;
 ?>
 <p/>
+<br/><br/>
 <div id="codeExample" style=<?php echo $codeExampleStyle;?>>
-<p>Call in <select name="Language" id="Language" onchange="optionCheckLanguage(this)">
+<p>
+<h2>Code example</h2>
+Call in <select name="Language" id="Language" onchange="optionCheckLanguage(this)">
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'C') { ?>selected="true" <?php }; ?>value="C">C/C++/Objective-C</option>
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'Fortran') { ?>selected="true" <?php }; ?>value="Fortran">Fortran 2003/2008</option>
   <option <?php if (isset($_GET['Language']) && $_GET['Language'] == 'Perl') { ?>selected="true" <?php }; ?>value="Perl">Perl</option>
@@ -1223,6 +1228,7 @@ echo "Enable support for xraylib in your program using:<br/>";
 </div>
 
 </form>
+<br/><br/>
 
 <script type="text/javascript">
 function displayNoneAllLanguage() {
