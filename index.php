@@ -14,6 +14,7 @@ if ($_SERVER['REMOTE_ADDR'] != "127.0.0.1") {
 
 include("xraylib.php");
 include("xraylib_aux.php");
+require_once 'HTML/Table.php';
 //error_reporting(E_WARNING);
 //init
 $xrlFunction="LineEnergy";
@@ -405,37 +406,75 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$xrlFunction == "AugerYield" ||
 	$xrlFunction == "ElectronConfig"
 	)) {
-	$realShell = @constant($Shell);
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $realShell);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).")";
+	if ($Shell == "ALL") {
+		if (is_numeric($Element)) {
+			$myElement = $Element;
 		}
-		unset($value);
-	}
-	else {
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).")";
+		else {
+			$myElement = SymbolToAtomicNumber($Element);
 		}
-		unset($value);
-	}
-	if ($result != 0.0) {
-		$result = sprintf("%g", $result);
-	}
-	if ($xrlFunction == "EdgeEnergy" || $xrlFunction == "AtomicLevelWidth") {
-		$unit=" keV";
-	}
-	else if ($xrlFunction == "ElectronConfig") {
-		$unit =" electrons"; 
-	}
-	else {
+		$result = "";
+		$table = new HTML_Table(array('width' => '200px'));
+		$table->setAutoGrow(true);
+		$table->setHeaderContents(0, 0, 'Shell');
+		$table->setHeaderContents(0, 1, $xrlFunction);
+		$counter=1;
+  		foreach ($shellsArray as $shell) {
+			$realShell = @constant($shell."_SHELL");
+			if (($value = $xrlFunction($myElement, $realShell)) > 0.0) {
+				$value = sprintf("%g", $value);
+				if ($xrlFunction == "EdgeEnergy" || $xrlFunction == "AtomicLevelWidth") {
+					$value .=" keV";
+				}
+				else if ($xrlFunction == "ElectronConfig") {
+					$value .=" electrons"; 
+				}
+				$table->setCellContents($counter,0, $shell);
+				$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+				$table->setCellContents($counter,1, $value);
+				$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+				$counter++;
+			}
+		}
+		$result=$table->toHtml();
 		$unit="";
+		$command = "";
+		$codeExampleStyle="display:none";
+	}
+	else {
+		$realShell = @constant($Shell);
+		if (is_numeric($Element)) {
+			$result = $xrlFunction($Element, $realShell);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).")";
+			}
+			unset($value);
+		}
+		else {
+			$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).")";
+			}
+			unset($value);
+		}
+		if ($result != 0.0) {
+			$result = sprintf("%g", $result);
+		}
+		if ($xrlFunction == "EdgeEnergy" || $xrlFunction == "AtomicLevelWidth") {
+			$unit=" keV";
+		}
+		else if ($xrlFunction == "ElectronConfig") {
+			$unit =" electrons"; 
+		}
+		else {
+			$unit="";
+		}
+		$codeExampleStyle="display:block";
 	}
 	display_none_all();
 	$ElementStyle="display:block";
 	$ShellStyle="display:block";
-	$codeExampleStyle="display:block";
+	goto past_error;
 	
 	}
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
@@ -444,35 +483,71 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 		$result=0.0;
 		goto error;
 	}
-	$realShell = @constant($Shell);
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $realShell, $Energy);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).", ".$Energy.")";
+	if ($Shell == "ALL") {
+		if (is_numeric($Element)) {
+			$myElement = $Element;
 		}
-		unset($value);
-	}
-	else {
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).", ".$Energy.")";
+		else {
+			$myElement = SymbolToAtomicNumber($Element);
 		}
-		unset($value);
-	}
-	if ($result != 0.0) {
-		$result = sprintf("%g", $result);
-	}
-	if ($xrlFunction == "CS_Photo_Partial") {
-		$unit=" cm<sup>2</sup>/g";
-	}
-	else {
+		$result = "";
+		$table = new HTML_Table(array('width' => '200px'));
+		$table->setAutoGrow(true);
+		$table->setHeaderContents(0, 0, 'Shell');
+		$table->setHeaderContents(0, 1, $xrlFunction);
+		$counter=1;
+  		foreach ($shellsArray as $shell) {
+			$realShell = @constant($shell."_SHELL");
+			if (($value = $xrlFunction($myElement, $realShell, $Energy)) > 0.0) {
+				$value = sprintf("%g", $value);
+				if ($xrlFunction == "CS_Photo_Partial") {
+					$value .=" cm<sup>2</sup>/g";
+				}
+				$table->setCellContents($counter,0, $shell);
+				$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+				$table->setCellContents($counter,1, $value);
+				$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+				$counter++;
+			}
+		}
+		$result=$table->toHtml();
 		$unit="";
+		$command = "";
+
+		$codeExampleStyle="display:none";
+	}
+	else {
+		$realShell = @constant($Shell);
+		if (is_numeric($Element)) {
+			$result = $xrlFunction($Element, $realShell, $Energy);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).", ".$Energy.")";
+			}
+			unset($value);
+		}
+		else {
+			$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).", ".$Energy.")";
+			}
+			unset($value);
+		}
+		if ($result != 0.0) {
+			$result = sprintf("%g", $result);
+		}
+		if ($xrlFunction == "CS_Photo_Partial") {
+			$unit=" cm<sup>2</sup>/g";
+		}
+		else {
+			$unit="";
+		}
+		$codeExampleStyle="display:block";
 	}
 	display_none_all();
 	$ElementStyle="display:block";
 	$EnergyStyle="display:block";
 	$ShellStyle="display:block";
-	$codeExampleStyle="display:block";
+	goto past_error;
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "AtomicWeight" || $xrlFunction == "ElementDensity")) {
 	if (is_numeric($Element)) {
@@ -616,35 +691,68 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile")) {
 	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial")) {
-	$realShell = @constant($Shell);
 	if (!is_numeric($PZ) || $PZ < 0.0 || $Energy > 100.0) {
 		$result=0.0;
 		goto error;
 	}
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $realShell, $PZ);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).", ".$PZ.")";
+	if ($Shell == "ALL") {
+		if (is_numeric($Element)) {
+			$myElement = $Element;
 		}
-		unset($value);
+		else {
+			$myElement = SymbolToAtomicNumber($Element);
+		}
+		$result = "";
+		$table = new HTML_Table(array('width' => '200px'));
+		$table->setAutoGrow(true);
+		$table->setHeaderContents(0, 0, 'Shell');
+		$table->setHeaderContents(0, 1, $xrlFunction);
+		$counter=1;
+  		foreach ($shellsArray as $shell) {
+			$realShell = @constant($shell."_SHELL");
+			if (($value = $xrlFunction($myElement, $realShell, $PZ)) > 0.0) {
+				$value = sprintf("%g", $value);
+				$table->setCellContents($counter,0, $shell);
+				$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+				$table->setCellContents($counter,1, $value);
+				$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+				$counter++;
+			}
+		}
+		$result=$table->toHtml();
+		$unit="";
+		$command = "";
+		$codeExampleStyle="display:none";
 	}
 	else {
-		#chemical symbol found
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell, $PZ);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).", ".$PZ.")";
+		$realShell = @constant($Shell);
+		if (is_numeric($Element)) {
+			$result = $xrlFunction($Element, $realShell, $PZ);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Shell, XRL_MACRO, $key).", ".$PZ.")";
+			}
+			unset($value);
 		}
-		unset($value);
+		else {
+			#chemical symbol found
+			$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell, $PZ);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).", ".$PZ.")";
+			}
+			unset($value);
+		}
+		if ($result != 0.0) {
+			$result = sprintf("%g", $result);
+		}
+		$unit="";
+		$codeExampleStyle="display:block";
 	}
-	if ($result != 0.0) {
-		$result = sprintf("%g", $result);
-	}
-	$unit="";
 	display_none_all();
 	$ElementStyle="display:block";
 	$PZStyle="display:block";
 	$ShellStyle="display:block";
 	$codeExampleStyle="display:block";
+	goto past_error;
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
@@ -1125,13 +1233,19 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   </div>
   <div id="shell" style="<?php echo $ShellStyle;?>">
   Shell: <select name="Shell" id="Shell">
-  <?php foreach ($shellsArray as $shell) {
+  <?php 
+  echo "<option value=\"ALL\"";
+  if ($Shell == "ALL") {
+	echo "selected=\"true\" ";
+  }
+  echo ">All shells</option>";
+  foreach ($shellsArray as $shell) {
   		$shellFull = $shell."_SHELL";
   		echo "<option value=\"$shellFull\"";
 		if ($Shell == $shellFull) {
 				echo "selected=\"true\" ";
 		}
-		echo "> $shell</option>";
+		echo ">$shell</option>";
   	}	
   ?>
   </select>
@@ -1498,7 +1612,7 @@ function optionCheckFunction(combo) {
 <address>
 Maintained by <a href="mailto:Tom.Schoonjans@gmail.com">Tom Schoonjans</a><br/>
 Thanks to Prof. Laszlo Vincze of Ghent University for providing the webspace.<br/>
-Built using xraylib <?php echo XRAYLIB_MAJOR.".".XRAYLIB_MINOR?>.
+Built using xraylib <?php echo XRAYLIB_MAJOR.".".XRAYLIB_MINOR.".".XRAYLIB_MICRO ?>.
 Development occurs at the <a href="http://github.com/tschoonj/xraylib-web"><i>xraylib-web Github repository</i></a>
 </address>
 </footer>

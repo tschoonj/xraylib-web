@@ -409,4 +409,6 @@ div .block-banner div {
   width: 210px;
 }
 
-
+.cellattr {
+  text-align: center;
+}
