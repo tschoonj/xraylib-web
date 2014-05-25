@@ -241,6 +241,10 @@ if (isset($_GET["PZ"])) {
 if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	$xrlFunction == "RadRate"
 	)) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$LinetypeStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Linename)) {
 		//Linename is not an integer, so it should be one of the constants
 		$realLinename = @constant($Linename);
@@ -276,12 +280,12 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	else {
 		$unit="";
 	}
-	display_none_all();
-	$ElementStyle="display:block";
-	$LinetypeStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 else if (isset($_GET['xrlFunction']) && ($xrlFunction == "AugerRate")) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$AugerTransStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($AugerTrans)) {
 		//Linename is not an integer, so it should be one of the constants
 		$realAugerTrans = @constant($AugerTrans);
@@ -312,12 +316,13 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "AugerRate")) {
 		$result = sprintf("%g", $result);
 	}
 	$unit="";
-	display_none_all();
-	$ElementStyle="display:block";
-	$AugerTransStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 else if (isset($_GET['xrlFunction']) && ($xrlFunction == "Refractive_Index")) {
+	display_none_all();
+	$ElementOrCompoundStyle="display:block";
+	$EnergyStyle="display:block";
+	$DensityStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -347,11 +352,6 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "Refractive_Index")) {
 		$result = sprintf("%g + %gi", $result["re"],$result["im"]);
 	}
 	$unit="";
-	display_none_all();
-	$ElementOrCompoundStyle="display:block";
-	$EnergyStyle="display:block";
-	$DensityStyle="display:block";
-	$codeExampleStyle="display:block";
 
 }
 else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Cascade" ||
@@ -359,6 +359,11 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Ca
 	$xrlFunction == "CS_FluorLine_Kissel_Radiative_Cascade" ||
 	$xrlFunction == "CS_FluorLine_Kissel_no_Cascade"
 	)) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$LinetypeStyle="display:block";
+	$EnergyStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -393,11 +398,6 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Ca
 		$result = sprintf("%g", $result);
 	}
 	$unit=" cm<sup>2</sup>/g";
-	display_none_all();
-	$ElementStyle="display:block";
-	$LinetypeStyle="display:block";
-	$EnergyStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$xrlFunction == "FluorYield" ||
@@ -406,12 +406,19 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$xrlFunction == "AugerYield" ||
 	$xrlFunction == "ElectronConfig"
 	)) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$ShellStyle="display:block";
 	if ($Shell == "ALL") {
 		if (is_numeric($Element)) {
 			$myElement = $Element;
 		}
 		else {
 			$myElement = SymbolToAtomicNumber($Element);
+		}
+		if ($myElement < 1 || $myElement > 92) {
+			$result=0.0;
+			goto error;
 		}
 		$result = "";
 		$table = new HTML_Table(array('width' => '200px'));
@@ -460,6 +467,9 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 		if ($result != 0.0) {
 			$result = sprintf("%g", $result);
 		}
+		else {
+			goto error;
+		}
 		if ($xrlFunction == "EdgeEnergy" || $xrlFunction == "AtomicLevelWidth") {
 			$unit=" keV";
 		}
@@ -471,15 +481,16 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 		}
 		$codeExampleStyle="display:block";
 	}
-	display_none_all();
-	$ElementStyle="display:block";
-	$ShellStyle="display:block";
 	goto past_error;
 	
-	}
+}
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 	)) {
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$EnergyStyle="display:block";
+	$ShellStyle="display:block";
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > 200.0) {
 		$result=0.0;
 		goto error;
 	}
@@ -489,6 +500,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 		}
 		else {
 			$myElement = SymbolToAtomicNumber($Element);
+		}
+		if ($myElement < 1 || $myElement > 99) {
+			$result=0.0;
+			goto error;
 		}
 		$result = "";
 		$table = new HTML_Table(array('width' => '200px'));
@@ -535,6 +550,9 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 		if ($result != 0.0) {
 			$result = sprintf("%g", $result);
 		}
+		else {
+			goto error;
+		}
 		if ($xrlFunction == "CS_Photo_Partial") {
 			$unit=" cm<sup>2</sup>/g";
 		}
@@ -543,13 +561,12 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 		}
 		$codeExampleStyle="display:block";
 	}
-	display_none_all();
-	$ElementStyle="display:block";
-	$EnergyStyle="display:block";
-	$ShellStyle="display:block";
 	goto past_error;
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "AtomicWeight" || $xrlFunction == "ElementDensity")) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element);
 		foreach ($commands as $key => &$value) {
@@ -567,15 +584,15 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "AtomicWeight" || $xrlFu
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
+	else {
+		goto error;
+	}
 	if ($xrlFunction == "AtomicWeight"){
 		$unit=" g/mol";
 	}
 	elseif ($xrlFunction == "ElementDensity"){
 		$unit=" g/cm<sup>3</sup>";
 	}
-	display_none_all();
-	$ElementStyle="display:block";
-	$codeExampleStyle="display:block";
 
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFunction == "CS_Photo" ||
@@ -584,6 +601,11 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 	$xrlFunction == "CSb_Rayl" || $xrlFunction == "CSb_Compt" ||
 	$xrlFunction == "CS_Energy"
 	)) {
+	display_none_all();
+	$ElementOrCompoundStyle="display:block";
+	$EnergyStyle="display:block";
+	$codeExampleStyle="display:block";
+
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -621,15 +643,14 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 	else {
 		$unit=" cm<sup>2</sup>/g";
 	}
-	display_none_all();
-	$ElementOrCompoundStyle="display:block";
-	$EnergyStyle="display:block";
-	$codeExampleStyle="display:block";
-
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "Fi" || 
 	$xrlFunction == "Fii"
 	)) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$EnergyStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -655,13 +676,13 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "Fi" ||
 	if (substr($xrlFunction,0,2) == "Fi"){
 		$unit="";
 	}
-	display_none_all();
-	$ElementStyle="display:block";
-	$EnergyStyle="display:block";
-	$codeExampleStyle="display:block";
 
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile")) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$PZStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($PZ) || $PZ < 0.0 || $Energy > 100.0) {
 		$result=0.0;
 		goto error;
@@ -685,12 +706,13 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile")) {
 		$result = sprintf("%g", $result);
 	}
 	$unit="";
+}
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial")) {
 	display_none_all();
 	$ElementStyle="display:block";
 	$PZStyle="display:block";
+	$ShellStyle="display:block";
 	$codeExampleStyle="display:block";
-}
-elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial")) {
 	if (!is_numeric($PZ) || $PZ < 0.0 || $Energy > 100.0) {
 		$result=0.0;
 		goto error;
@@ -701,6 +723,10 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial"
 		}
 		else {
 			$myElement = SymbolToAtomicNumber($Element);
+		}
+		if ($myElement < 1 || $myElement > 102) {
+			$result=0.0;
+			goto error;
 		}
 		$result = "";
 		$table = new HTML_Table(array('width' => '200px'));
@@ -744,14 +770,12 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial"
 		if ($result != 0.0) {
 			$result = sprintf("%g", $result);
 		}
+		else {
+			goto error;
+		}
 		$unit="";
 		$codeExampleStyle="display:block";
 	}
-	display_none_all();
-	$ElementStyle="display:block";
-	$PZStyle="display:block";
-	$ShellStyle="display:block";
-	$codeExampleStyle="display:block";
 	goto past_error;
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
@@ -773,6 +797,9 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
 	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
+	display_none_all();
+	$ThetaStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Theta) || $Theta < 0.0 || $Theta > PI) {
 		$result=0.0;
 		goto error;
@@ -786,13 +813,14 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Thoms")) {
 		$result = sprintf("%g", $result);
 	}
 	$unit=" cm<sup>2</sup>/g/sr";
-	display_none_all();
-	$ThetaStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" ||
 	$xrlFunction == "MomentTransf" || 
 	$xrlFunction == "ComptonEnergy")) {
+	display_none_all();
+	$EnergyStyle="display:block";
+	$ThetaStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -809,6 +837,9 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" ||
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
+	else {
+		goto error;
+	}
 	if ($xrlFunction == "DCS_KN") {
 		$unit=" cm<sup>2</sup>/g/sr";
 	}
@@ -818,15 +849,16 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" ||
 	else {
 		$unit = "";
 	}
-	display_none_all();
-	$EnergyStyle="display:block";
-	$ThetaStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	$xrlFunction == "DCS_Compt" ||
 	$xrlFunction == "DCSb_Rayl" ||
 	$xrlFunction == "DCSb_Compt")) {
+	display_none_all();
+	$EnergyStyle="display:block";
+	$ThetaStyle="display:block";
+	$ElementOrCompoundStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -861,19 +893,21 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
+	else {
+		goto error;
+	}
 	if (substr($xrlFunction,0,4) == "DCSb"){
 		$unit=" barns/atom/sr";
 	}
 	else {
 		$unit=" cm<sup>2</sup>/g/sr";
 	}
-	display_none_all();
-	$EnergyStyle="display:block";
-	$ThetaStyle="display:block";
-	$ElementOrCompoundStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
+	display_none_all();
+	$ThetaStyle="display:block";
+	$PhiStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Theta) || $Theta < 0.0 || $Theta > PI) {
 		$result=0.0;
 		goto error;
@@ -890,13 +924,17 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Thoms")) {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
+	else {
+		goto error;
+	}
 	$unit=" cm<sup>2</sup>/g/sr";
+}
+elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 	display_none_all();
+	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
 	$PhiStyle="display:block";
 	$codeExampleStyle="display:block";
-}
-elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -917,17 +955,21 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
+	else {
+		goto error;
+	}
 	$unit=" cm<sup>2</sup>/g/sr";
-	display_none_all();
-	$EnergyStyle="display:block";
-	$ThetaStyle="display:block";
-	$PhiStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	$xrlFunction == "DCSP_Compt" ||
 	$xrlFunction == "DCSPb_Rayl" ||
 	$xrlFunction == "DCSPb_Compt")) {
+	display_none_all();
+	$EnergyStyle="display:block";
+	$ThetaStyle="display:block";
+	$ElementOrCompoundStyle="display:block";
+	$PhiStyle="display:block";
+	$codeExampleStyle="display:block";
 	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
 		$result=0.0;
 		goto error;
@@ -966,21 +1008,23 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
+	else {
+		goto error;
+	}
 	if (substr($xrlFunction,0,5) == "DCSPb"){
 		$unit=" barns/atom/sr";
 	}
 	else {
 		$unit=" cm<sup>2</sup>/g/sr";
 	}
-	display_none_all();
-	$EnergyStyle="display:block";
-	$ThetaStyle="display:block";
-	$ElementOrCompoundStyle="display:block";
-	$PhiStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "FF_Rayl" ||
 	$xrlFunction == "SF_Compt")) {
+	display_none_all();
+	$ElementStyle="display:block";
+	$MomentumTransferStyle="display:block";
+	$codeExampleStyle="display:block";
+	
 	if (!is_numeric($MomentumTransfer)) {
 		$result=0.0;
 		goto error;
@@ -1003,13 +1047,15 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "FF_Rayl" ||
 		$result = sprintf("%g", $result);
 		$unit = "";
 	}
-	display_none_all();
-	$ElementStyle="display:block";
-	$MomentumTransferStyle="display:block";
-	$codeExampleStyle="display:block";
-	
+	else {
+		goto error;
+	}
 }
 elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CosKronTransProb") {
+	display_none_all();
+	$ElementStyle="display:block";
+	$CKTransStyle="display:block";
+	$codeExampleStyle="display:block";
 	$realCKTrans = constant($CKTrans);
 	if (is_numeric($Element)) {
 		$result = $xrlFunction($Element, $realCKTrans);
@@ -1028,11 +1074,10 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CosKronTransProb") {
 	if ($result != 0.0) {
 		$result = sprintf("%g", $result);
 	}
+	else {
+		goto error;
+	}
 	$unit="";
-	display_none_all();
-	$ElementStyle="display:block";
-	$CKTransStyle="display:block";
-	$codeExampleStyle="display:block";
 }
 elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetCompoundDataNISTList") {
 	$nistCompounds = GetCompoundDataNISTList();
