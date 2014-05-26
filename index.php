@@ -126,6 +126,9 @@ if (isset($_GET["LinenameSwitch"])) {
 	elseif ($LinenameSwitch == "Siegbahn") {
 		$Linename = $Linename2;
 	}
+	elseif ($LinenameSwitch == "ALL") {
+		$Linename = "ALL";
+	}
 }
 
 if (isset($_GET["Shell"])) {
@@ -244,42 +247,85 @@ if (isset($_GET['xrlFunction']) && ($xrlFunction == "LineEnergy" ||
 	display_none_all();
 	$ElementStyle="display:block";
 	$LinetypeStyle="display:block";
-	$codeExampleStyle="display:block";
-	if (!is_numeric($Linename)) {
-		//Linename is not an integer, so it should be one of the constants
-		$realLinename = @constant($Linename);
-		if (!isset($realLinename)) {
+	if ($Linename == "ALL") {
+		if (is_numeric($Element)) {
+			$myElement = $Element;
+		}
+		else {
+			$myElement = SymbolToAtomicNumber($Element);
+		}
+		if ($myElement < 1 || $myElement > 94) {
 			$result=0.0;
 			goto error;
 		}
-	}
-	else {
-		$result=0.0;
-		goto error;
-	}
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $realLinename);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Linename, XRL_MACRO, $key).")";
+		$result = "";
+		$table = new HTML_Table(array('width' => '200px'));
+		$table->setAutoGrow(true);
+		$table->setHeaderContents(0, 0, 'Transition');
+		$table->setHeaderContents(0, 1, $xrlFunction);
+		$counter=1;
+  		foreach ($shellsArray as $index => $shell) {
+  			foreach (array_slice($shellsArray, $index+1) as $shell2) {
+				$realLinename = $shell.$shell2."_LINE";
+				if (defined($realLinename) && ($value = $xrlFunction($myElement, @constant($realLinename))) > 0.0) {
+					$value = sprintf("%g", $value);
+					if ($xrlFunction == "LineEnergy") {
+						$value .=" keV";
+					}
+					$table->setCellContents($counter,0, $shell.$shell2);
+					$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+					$table->setCellContents($counter,1, $value);
+					$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+					$counter++;
+				}
+			}
 		}
-		unset($value);
-	}
-	else {
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realLinename);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Linename, XRL_MACRO, $key).")";
-		}
-		unset($value);
-	}
-	if ($result != 0.0) {
-		$result = sprintf("%g", $result);
-	}
-	if ($xrlFunction == "LineEnergy") {
-		$unit=" keV";
-	}
-	else {
+		$result=$table->toHtml();
 		$unit="";
+		$command = "";
+
+
+		$codeExampleStyle="display:none";
 	}
+	else {
+		if (!is_numeric($Linename)) {
+			//Linename is not an integer, so it should be one of the constants
+			$realLinename = @constant($Linename);
+			if (!isset($realLinename)) {
+				$result=0.0;
+				goto error;
+			}
+		}
+		else {
+			$result=0.0;
+			goto error;
+		}
+		if (is_numeric($Element)) {
+			$result = $xrlFunction($Element, $realLinename);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Linename, XRL_MACRO, $key).")";
+			}
+			unset($value);
+		}
+		else {
+			$result = $xrlFunction(SymbolToAtomicNumber($Element), $realLinename);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Linename, XRL_MACRO, $key).")";
+			}
+			unset($value);
+		}
+		if ($result != 0.0) {
+			$result = sprintf("%g", $result);
+		}
+		if ($xrlFunction == "LineEnergy") {
+			$unit=" keV";
+		}
+		else {
+			$unit="";
+		}
+		$codeExampleStyle="display:block";
+	}
+	goto past_error;
 }
 else if (isset($_GET['xrlFunction']) && ($xrlFunction == "AugerRate")) {
 	display_none_all();
@@ -287,7 +333,6 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "AugerRate")) {
 	$AugerTransStyle="display:block";
 	$codeExampleStyle="display:block";
 	if (!is_numeric($AugerTrans)) {
-		//Linename is not an integer, so it should be one of the constants
 		$realAugerTrans = @constant($AugerTrans);
 		if (!isset($realAugerTrans)) {
 			$result=0.0;
@@ -363,41 +408,82 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Ca
 	$ElementStyle="display:block";
 	$LinetypeStyle="display:block";
 	$EnergyStyle="display:block";
-	$codeExampleStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 200.0) {
 		$result=0.0;
 		goto error;
 	}
-	if (!is_numeric($Linename)) {
-		//Linename is not an integer, so it should be one of the constants
-		$realLinename = @constant($Linename);
-		if (!isset($realLinename)) {
+	if ($Linename == "ALL") {
+		if (is_numeric($Element)) {
+			$myElement = $Element;
+		}
+		else {
+			$myElement = SymbolToAtomicNumber($Element);
+		}
+		if ($myElement < 1 || $myElement > 94) {
 			$result=0.0;
 			goto error;
 		}
+		$result = "";
+		$table = new HTML_Table(array('width' => '200px'));
+		$table->setAutoGrow(true);
+		$table->setHeaderContents(0, 0, 'Transition');
+		$table->setHeaderContents(0, 1, $xrlFunction);
+		$counter=1;
+  		foreach ($shellsArray as $index => $shell) {
+  			foreach (array_slice($shellsArray, $index+1) as $shell2) {
+				$realLinename = $shell.$shell2."_LINE";
+				if (defined($realLinename) && ($value = $xrlFunction($myElement, @constant($realLinename), $Energy)) > 0.0) {
+					$value = sprintf("%g", $value);
+					$value .=" cm<sup>2</sup>/g";
+					$table->setCellContents($counter,0, $shell.$shell2);
+					$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+					$table->setCellContents($counter,1, $value);
+					$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+					$counter++;
+				}
+			}
+		}
+		$result=$table->toHtml();
+		$unit="";
+		$command = "";
+
+
+		$codeExampleStyle="display:none";
 	}
 	else {
-		$result=0.0;
-		goto error;
-	}
-	if (is_numeric($Element)) {
-		$result = $xrlFunction($Element, $realLinename, $Energy);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Linename, XRL_MACRO, $key).", ".$Energy.")";
+		if (!is_numeric($Linename)) {
+			//Linename is not an integer, so it should be one of the constants
+			$realLinename = @constant($Linename);
+			if (!isset($realLinename)) {
+				$result=0.0;
+				goto error;
+			}
 		}
-		unset($value);
-	}
-	else {
-		$result = $xrlFunction(SymbolToAtomicNumber($Element), $realLinename, $Energy);
-		foreach ($commands as $key => &$value) {
-			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Linename, XRL_MACRO, $key).", ".$Energy.")";
+		else {
+			$result=0.0;
+			goto error;
 		}
-		unset($value);
+		if (is_numeric($Element)) {
+			$result = $xrlFunction($Element, $realLinename, $Energy);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".$Element.", ".expand_entity($Linename, XRL_MACRO, $key).", ".$Energy.")";
+			}
+			unset($value);
+		}
+		else {
+			$result = $xrlFunction(SymbolToAtomicNumber($Element), $realLinename, $Energy);
+			foreach ($commands as $key => &$value) {
+				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Linename, XRL_MACRO, $key).", ".$Energy.")";
+			}
+			unset($value);
+		}
+		if ($result != 0.0) {
+			$result = sprintf("%g", $result);
+		}
+		$unit=" cm<sup>2</sup>/g";
+		$codeExampleStyle="display:block";
 	}
-	if ($result != 0.0) {
-		$result = sprintf("%g", $result);
-	}
-	$unit=" cm<sup>2</sup>/g";
+	goto past_error;
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "EdgeEnergy" ||
 	$xrlFunction == "FluorYield" ||
@@ -1271,7 +1357,10 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
 			echo "> $siegbahn</option>";
 		}
 	?>
-   </select>
+   </select><br/>
+  <input type="radio" name="LinenameSwitch" id="ALL"
+   value="ALL" <?php if ($LinenameSwitch == 'ALL') { ?> checked <?php }?>/>
+   <label for="ALL">All transitions</label>
    </td>
    </tr>
    </table>
