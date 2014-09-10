@@ -16,6 +16,7 @@ include("xraylib.php");
 include("xraylib_aux.php");
 require_once 'HTML/Table.php';
 //error_reporting(E_WARNING);
+error_reporting(error_reporting() & ~E_STRICT);
 //init
 $xrlFunction="LineEnergy";
 $Element="26";
@@ -1186,6 +1187,27 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetCompoundDataNISTList"
 	$codeExampleStyle="display:block";
 	goto past_error;
 }
+elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetRadioNuclideDataList") {
+	$radioNuclides = GetRadioNuclideDataList();
+	$result = "";
+	for ($i = 0 ; $i < count($radioNuclides) ; $i++) {
+	        $result .= sprintf("  Radionuclide %d: %s<br/>", $i, $radioNuclides[$i]);
+	}
+
+	foreach ($commands as $key => &$value) {
+		if ($key == "C") {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(NULL)";
+		}
+		else {
+			$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."()";
+		}
+	}
+	unset($value);
+	$unit="";
+	display_none_all();
+	$codeExampleStyle="display:block";
+	goto past_error;
+}
 //error handling
 error:
 if (isset($_GET['xrlFunction']) && $result == 0.0) {
@@ -1261,6 +1283,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile') { ?>selected="true" <?php }; ?>value="ComptonProfile">Compton broadening profile</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile_Partial') { ?>selected="true" <?php }; ?>value="ComptonProfile_Partial">Partial Compton broadening profile</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetCompoundDataNISTList') { ?>selected="true" <?php }; ?>value="GetCompoundDataNISTList">List of NIST catalog compounds</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetRadioNuclideDataList') { ?>selected="true" <?php }; ?>value="GetRadioNuclideDataList">List of X-ray emitting radionuclides</option>
 </select>
 
 <div id="inputParameter">
@@ -1733,7 +1756,8 @@ function optionCheckFunction(combo) {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("shell").style.display= "block";
 	document.getElementById("pz").style.display= "block";
-    } else if (selectedValue === "GetCompoundDataNISTList") {
+    } else if (selectedValue === "GetCompoundDataNISTList" ||
+      selectedValue === "GetRadioNuclideDataList") {
 	/* do nothing */       
     } else if (selectedValue === "AugerRate") {
 	document.getElementById("element").style.display= "block";
