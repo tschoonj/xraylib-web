@@ -38,6 +38,7 @@ $PZ="1.0";
 $AugerTransa="K";
 $AugerTransb="L2";
 $AugerTransc="M3";
+$NISTcompound="Gadolinium Oxysulfide";
 $result="";
 
 $commands = array(
@@ -58,6 +59,8 @@ $shellsArray = array("K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5", "N1", 
 $siegbahnArray = array("KA1", "KA2", "KB1", "KB2", "KB3", "KB4", "KB5",
 "LA1", "LA2", "LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB9", "LB10", "LB15", "LB17",
 "LG1", "LG2", "LG3", "LG4", "LG5", "LG6", "LG8", "LE", "LL", "LS", "LT", "LU", "LV");
+$NISTcompoundArray = GetCompoundDataNISTList(); 
+
 
 $ElementStyle="display:block";
 $ElementOrCompoundStyle="display:none";
@@ -72,6 +75,7 @@ $CKTransStyle="display:none";
 $DensityStyle="display:none";
 $PZStyle="display:none";
 $AugerTransStyle="display:none";
+$NISTcompoundStyle="display:none";
 
 
 $Language="C";
@@ -107,6 +111,10 @@ if (isset($_GET["Element"])) {
 
 if (isset($_GET["Compound"])) {
 	$Compound = $_GET["Compound"];
+}
+
+if (isset($_GET["NISTcompound"])) {
+	$NISTcompound = $_GET["NISTcompound"];
 }
 
 if (isset($_GET["ElementOrCompound"])) {
@@ -1242,7 +1250,7 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CompoundParser") {
 	//$result .= sprintf("  Number of elements: %d<br/>", $compoundData["nElements"]);
 	//$result .= sprintf("  Number of atoms: %g<br/>", $compoundData["nAtomsAll"]);
 	//$result .= sprintf("  Composition:<br/>");
-	$table = new HTML_Table(array('width' => '200px'));
+	$table = new HTML_Table(array('width' => '250px'));
 	$table->setAutoGrow(true);
 	//$table->setCellContents(0, 0, "Number of elements");
 	//$table->setCellContents(0, 1, sprintf("%d", $compoundData["nElements"]));
@@ -1257,7 +1265,47 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CompoundParser") {
 		//$result .= sprintf("    %s: %g %%<br/>", $compoundData["Elements"][$i], $compoundData["massFractions"][$i]);
 		$table->setCellContents($counter,0, sprintf("%s", AtomicNumberToSymbol($compoundData["Elements"][$i])));
 		$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
-		$table->setCellContents($counter,1, sprintf("%g",$compoundData["massFractions"][$i]*100.0));
+		$table->setCellContents($counter,1, sprintf("%g %%",$compoundData["massFractions"][$i]*100.0));
+		$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+		$counter++;
+	}
+	$result=$table->toHtml();
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".stringify($Compound, $key).")";
+	}
+	unset($value);
+	$unit="";
+	goto past_error;
+}
+elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetCompoundDataNISTByName") {
+	display_none_all();
+	$codeExampleStyle="display:block";
+	$NISTcompoundStyle="display:block";
+	$compoundData = GetCompoundDataNISTByName($NISTcompound);
+	if ($compoundData == NULL) {
+		goto error;
+	}
+	$result = "";
+	//$result .= sprintf("  Number of elements: %d<br/>", $compoundData["nElements"]);
+	//$result .= sprintf("  Density: %g<br/>", $compoundData["density"]);
+	//$result .= sprintf("  Composition:<br/>");
+	$table = new HTML_Table(array('width' => '200px'));
+	$table->setAutoGrow(true);
+	//$table->setCellContents(0, 0, "Number of elements");
+	//$table->setCellContents(0, 1, sprintf("%d", $compoundData["nElements"]));
+	//$table->setCellAttributes(0, 0, array('align' => 'left'));
+	$table->setHeaderContents(0, 0, "Density");
+	$table->setCellAttributes(0,0, array('class' => 'cellattr'));
+	$table->setCellContents(0, 1, sprintf("%g g/cm<sup>3</sup>", $compoundData["density"]));
+	$table->setCellAttributes(0,1, array('class' => 'cellattr'));
+	$table->setHeaderContents(1, 0, "Element");
+	$table->setHeaderContents(1, 1, "Weight fraction");
+	$counter=2;
+	for ($i = 0 ; $i < $compoundData["nElements"] ; $i++) {
+		//$result .= sprintf("    %s: %g %%<br/>", $compoundData["Elements"][$i], $compoundData["massFractions"][$i]);
+		$table->setCellContents($counter,0, sprintf("%s", AtomicNumberToSymbol($compoundData["Elements"][$i])));
+		$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+		$table->setCellContents($counter,1, sprintf("%g %%",$compoundData["massFractions"][$i]*100.0));
 		$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
 		$counter++;
 	}
@@ -1344,6 +1392,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile') { ?>selected="true" <?php }; ?>value="ComptonProfile">Compton broadening profile</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile_Partial') { ?>selected="true" <?php }; ?>value="ComptonProfile_Partial">Partial Compton broadening profile</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetCompoundDataNISTList') { ?>selected="true" <?php }; ?>value="GetCompoundDataNISTList">List of NIST catalog compounds</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetCompoundDataNISTByName') { ?>selected="true" <?php }; ?>value="GetCompoundDataNISTByName">Get composition of NIST catalog compound</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetRadioNuclideDataList') { ?>selected="true" <?php }; ?>value="GetRadioNuclideDataList">List of X-ray emitting radionuclides</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CompoundParser') { ?>selected="true" <?php }; ?>value="CompoundParser">Compoundparser</option>
 </select>
@@ -1452,6 +1501,19 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
    </td>
    </tr>
    </table>
+  </div>
+  <div id="nistcompound" style="<?php echo $NISTcompoundStyle;?>">
+  NIST compound: <select name="NISTcompound" id="NISTcompound">
+  <?php
+  foreach ($NISTcompoundArray as $nistcompound) {
+  	echo "<option value=\"$nistcompound\"";
+	if ($nistcompound == $NISTcompound) {
+		echo "selected=\"true\" ";
+  	} 
+	echo ">$nistcompound</option>";
+  } 
+  ?>
+  </select>
   </div>
   <div id="shell" style="<?php echo $ShellStyle;?>">
   Shell: <select name="Shell" id="Shell">
@@ -1604,6 +1666,7 @@ function displayNoneAllFunction() {
 	document.getElementById("density").style.display= "none";
 	document.getElementById("pz").style.display= "none";
 	document.getElementById("augertrans").style.display= "none";
+	document.getElementById("nistcompound").style.display= "none";
 }
 
 function optionCheckLanguage(combo) {
@@ -1830,6 +1893,8 @@ function optionCheckFunction(combo) {
 	document.getElementById("augertrans").style.display= "block";
     } else if (selectedValue === "CompoundParser") {
 	document.getElementById("compound").style.display= "block";
+    } else if (selectedValue === "GetCompoundDataNISTByName") {
+	document.getElementById("nistcompound").style.display= "block";
     }
 }
 

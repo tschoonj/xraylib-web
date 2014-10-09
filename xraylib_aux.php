@@ -129,6 +129,7 @@ function display_none_all(){
 	global $DensityStyle;
 	global $PZStyle;
 	global $AugerTransStyle;
+	global $NISTcompoundStyle;
 
 	$ElementStyle="display:none";
 	$CompoundStyle="display:none";
@@ -143,6 +144,7 @@ function display_none_all(){
 	$DensityStyle="display:none";
 	$PZStyle="display:none";
 	$AugerTransStyle="display:none";
+	$NISTcompoundStyle="display:none";
 }
 
 ?>
