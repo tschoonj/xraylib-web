@@ -21,6 +21,7 @@ error_reporting(error_reporting() & ~E_STRICT);
 $xrlFunction="LineEnergy";
 $Element="26";
 $ElementOrCompound="FeSO4";
+$Compound="Ca5(PO4)3";
 $Linename="KL3_LINE";
 $LinenameSwitch="IUPAC";
 $Linename1a="K";
@@ -60,6 +61,7 @@ $siegbahnArray = array("KA1", "KA2", "KB1", "KB2", "KB3", "KB4", "KB5",
 
 $ElementStyle="display:block";
 $ElementOrCompoundStyle="display:none";
+$compoundStyle="display:none";
 $LinetypeStyle="display:block";
 $ShellStyle="display:none";
 $EnergyStyle="display:none";
@@ -101,6 +103,10 @@ $includeSupportPHPStyle="display:none";
 if ($_SERVER["REQUEST_METHOD"] == "GET"){
 if (isset($_GET["Element"])) {
 	$Element = $_GET["Element"];
+}
+
+if (isset($_GET["Compound"])) {
+	$Compound = $_GET["Compound"];
 }
 
 if (isset($_GET["ElementOrCompound"])) {
@@ -1169,9 +1175,17 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CosKronTransProb") {
 elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetCompoundDataNISTList") {
 	$nistCompounds = GetCompoundDataNISTList();
 	$result = "";
+
+	$table = new HTML_Table(NULL);
+	$table->setAutoGrow(true);
+	$table->setHeaderContents(0, 0, 'NIST compound name');
+	$table->setCellAttributes(0, 0, array('class' => 'cellattrl'));
 	for ($i = 0 ; $i < count($nistCompounds) ; $i++) {
-	        $result .= sprintf("  Compound %d: %s<br/>", $i, $nistCompounds[$i]);
+	        //$result .= sprintf("  Compound %d: %s<br/>", $i, $nistCompounds[$i]);
+		$table->setCellContents($i+1, 0, $nistCompounds[$i]);
+		$table->setCellAttributes($i+1, 0, array('class' => 'cellattrl'));
 	}
+	$result=$table->toHtml();
 
 	foreach ($commands as $key => &$value) {
 		if ($key == "C") {
@@ -1190,9 +1204,17 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetCompoundDataNISTList"
 elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetRadioNuclideDataList") {
 	$radioNuclides = GetRadioNuclideDataList();
 	$result = "";
+
+	$table = new HTML_Table(NULL);
+	$table->setAutoGrow(true);
+	$table->setHeaderContents(0, 0, 'Radionuclide');
+	$table->setCellAttributes(0, 0, array('class' => 'cellattrl'));
 	for ($i = 0 ; $i < count($radioNuclides) ; $i++) {
-	        $result .= sprintf("  Radionuclide %d: %s<br/>", $i, $radioNuclides[$i]);
+	        //$result .= sprintf("  Compound %d: %s<br/>", $i, $nistCompounds[$i]);
+		$table->setCellContents($i+1, 0, $radioNuclides[$i]);
+		$table->setCellAttributes($i+1, 0, array('class' => 'cellattrl'));
 	}
+	$result=$table->toHtml();
 
 	foreach ($commands as $key => &$value) {
 		if ($key == "C") {
@@ -1206,6 +1228,45 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetRadioNuclideDataList"
 	$unit="";
 	display_none_all();
 	$codeExampleStyle="display:block";
+	goto past_error;
+}
+elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CompoundParser") {
+	display_none_all();
+	$codeExampleStyle="display:block";
+	$compoundStyle="display:block";
+	$compoundData = CompoundParser($Compound);
+	if ($compoundData == NULL) {
+		goto error;
+	}
+	$result = "";
+	//$result .= sprintf("  Number of elements: %d<br/>", $compoundData["nElements"]);
+	//$result .= sprintf("  Number of atoms: %g<br/>", $compoundData["nAtomsAll"]);
+	//$result .= sprintf("  Composition:<br/>");
+	$table = new HTML_Table(array('width' => '200px'));
+	$table->setAutoGrow(true);
+	//$table->setCellContents(0, 0, "Number of elements");
+	//$table->setCellContents(0, 1, sprintf("%d", $compoundData["nElements"]));
+	//$table->setCellAttributes(0, 0, array('align' => 'left'));
+	//$table->setCellContents(1, 0, "Number of atoms");
+	//$table->setCellContents(1, 1, sprintf("%g", $compoundData["nAtomsAll"]));
+	//$table->setCellAttributes(1, 0, array('align' => 'left'));
+	$table->setHeaderContents(0, 0, "Element");
+	$table->setHeaderContents(0, 1, "Weight fraction");
+	$counter=1;
+	for ($i = 0 ; $i < $compoundData["nElements"] ; $i++) {
+		//$result .= sprintf("    %s: %g %%<br/>", $compoundData["Elements"][$i], $compoundData["massFractions"][$i]);
+		$table->setCellContents($counter,0, sprintf("%s", AtomicNumberToSymbol($compoundData["Elements"][$i])));
+		$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+		$table->setCellContents($counter,1, sprintf("%g",$compoundData["massFractions"][$i]*100.0));
+		$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+		$counter++;
+	}
+	$result=$table->toHtml();
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".stringify($Compound, $key).")";
+	}
+	unset($value);
+	$unit="";
 	goto past_error;
 }
 //error handling
@@ -1284,6 +1345,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'ComptonProfile_Partial') { ?>selected="true" <?php }; ?>value="ComptonProfile_Partial">Partial Compton broadening profile</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetCompoundDataNISTList') { ?>selected="true" <?php }; ?>value="GetCompoundDataNISTList">List of NIST catalog compounds</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetRadioNuclideDataList') { ?>selected="true" <?php }; ?>value="GetRadioNuclideDataList">List of X-ray emitting radionuclides</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CompoundParser') { ?>selected="true" <?php }; ?>value="CompoundParser">Compoundparser</option>
 </select>
 
 <div id="inputParameter">
@@ -1292,6 +1354,9 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   </div>
   <div id="elementOrCompound" style="<?php echo $ElementOrCompoundStyle;?>">
   Element or Compound: <input type="text" name="ElementOrCompound" value="<?php echo $ElementOrCompound;?>"/>
+  </div>
+  <div id="compound" style="<?php echo $compoundStyle;?>">
+  Compound: <input type="text" name="Compound" value="<?php echo $Compound;?>"/>
   </div>
   <div id="augertrans" style="<?php echo $AugerTransStyle;?>">
    Excited shell: <select name="AugerTransa" id="AugerTransa" onchange="AugerTransaChanged(this)">
@@ -1528,6 +1593,7 @@ function displayNoneAllLanguage() {
 function displayNoneAllFunction() {
 	document.getElementById("element").style.display= "none";
 	document.getElementById("elementOrCompound").style.display= "none";
+	document.getElementById("compound").style.display= "none";
 	document.getElementById("linetype").style.display= "none";
 	document.getElementById("shell").style.display= "none";
 	document.getElementById("energy").style.display= "none";
@@ -1762,6 +1828,8 @@ function optionCheckFunction(combo) {
     } else if (selectedValue === "AugerRate") {
 	document.getElementById("element").style.display= "block";
 	document.getElementById("augertrans").style.display= "block";
+    } else if (selectedValue === "CompoundParser") {
+	document.getElementById("compound").style.display= "block";
     }
 }
 

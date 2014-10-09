@@ -117,6 +117,7 @@ function stringify($string, $lang){
 
 function display_none_all(){
 	global $ElementStyle;
+	global $CompoundStyle;
 	global $ElementOrCompoundStyle;
 	global $ShellStyle;
 	global $EnergyStyle;
@@ -130,6 +131,7 @@ function display_none_all(){
 	global $AugerTransStyle;
 
 	$ElementStyle="display:none";
+	$CompoundStyle="display:none";
 	$ElementOrCompoundStyle="display:none";
 	$ShellStyle="display:none";
 	$EnergyStyle="display:none";
