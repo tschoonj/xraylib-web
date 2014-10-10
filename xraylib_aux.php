@@ -130,6 +130,7 @@ function display_none_all(){
 	global $PZStyle;
 	global $AugerTransStyle;
 	global $NISTcompoundStyle;
+	global $RadioNuclideStyle;
 
 	$ElementStyle="display:none";
 	$CompoundStyle="display:none";
@@ -145,6 +146,7 @@ function display_none_all(){
 	$PZStyle="display:none";
 	$AugerTransStyle="display:none";
 	$NISTcompoundStyle="display:none";
+	$RadioNuclideStyle="display:none";
 }
 
 ?>

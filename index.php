@@ -39,6 +39,7 @@ $AugerTransa="K";
 $AugerTransb="L2";
 $AugerTransc="M3";
 $NISTcompound="Gadolinium Oxysulfide";
+$RadioNuclide="55Fe";
 $result="";
 
 $commands = array(
@@ -60,6 +61,7 @@ $siegbahnArray = array("KA1", "KA2", "KB1", "KB2", "KB3", "KB4", "KB5",
 "LA1", "LA2", "LB1", "LB2", "LB3", "LB4", "LB5", "LB6", "LB7", "LB9", "LB10", "LB15", "LB17",
 "LG1", "LG2", "LG3", "LG4", "LG5", "LG6", "LG8", "LE", "LL", "LS", "LT", "LU", "LV");
 $NISTcompoundArray = GetCompoundDataNISTList(); 
+$RadioNuclideArray = GetRadioNuclideDataList();
 
 
 $ElementStyle="display:block";
@@ -76,6 +78,7 @@ $DensityStyle="display:none";
 $PZStyle="display:none";
 $AugerTransStyle="display:none";
 $NISTcompoundStyle="display:none";
+$RadioNuclideStule="display:none";
 
 
 $Language="C";
@@ -115,6 +118,10 @@ if (isset($_GET["Compound"])) {
 
 if (isset($_GET["NISTcompound"])) {
 	$NISTcompound = $_GET["NISTcompound"];
+}
+
+if (isset($_GET["RadioNuclide"])) {
+	$RadioNuclide = $_GET["RadioNuclide"];
 }
 
 if (isset($_GET["ElementOrCompound"])) {
@@ -1317,6 +1324,59 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetCompoundDataNISTByNam
 	$unit="";
 	goto past_error;
 }
+elseif (isset($_GET['xrlFunction']) && $xrlFunction == "GetRadioNuclideDataByName") {
+	display_none_all();
+	$codeExampleStyle="display:block";
+	$RadioNuclideStyle="display:block";
+	$nuclideData = GetRadioNuclideDataByName($RadioNuclide);
+	if ($nuclideData == NULL) {
+		goto error;
+	}
+	$result = "";
+	//$result .= sprintf("  Number of elements: %d<br/>", $compoundData["nElements"]);
+	//$result .= sprintf("  Density: %g<br/>", $compoundData["density"]);
+	//$result .= sprintf("  Composition:<br/>");
+	$table = new HTML_Table(NULL);
+	$table->setAutoGrow(true);
+	//$table->setCellContents(0, 0, "Number of elements");
+	//$table->setCellContents(0, 1, sprintf("%d", $compoundData["nElements"]));
+	//$table->setCellAttributes(0, 0, array('align' => 'left'));
+	$table->setHeaderContents(0, 0, "X-ray energy");
+	$table->setCellAttributes(0,0, array('class' => 'cellattr'));
+	$table->setHeaderContents(0, 1, "Disintegrations per second");
+	$table->setCellAttributes(0,1, array('class' => 'cellattr'));
+	$counter=1;
+	for ($i = 0 ; $i < $nuclideData["nXrays"] ; $i++) {
+		//$result .= sprintf("    %s: %g %%<br/>", $compoundData["Elements"][$i], $compoundData["massFractions"][$i]);
+		$table->setCellContents($counter,0, sprintf("%g keV", LineEnergy($nuclideData["Z_xray"], $nuclideData["XrayLines"][$i])));
+		$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+		$table->setCellContents($counter,1, sprintf("%g",$nuclideData["XrayIntensities"][$i]));
+		$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+		$counter++;
+	}
+	$table->setHeaderContents($counter, 0, "Gamma-ray energy");
+	$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+	$table->setHeaderContents($counter, 1, "Disintegrations per second");
+	$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+	$counter++;
+	for ($i = 0 ; $i < $nuclideData["nGammas"] ; $i++) {
+		//$result .= sprintf("    %s: %g %%<br/>", $compoundData["Elements"][$i], $compoundData["massFractions"][$i]);
+		$table->setCellContents($counter,0, sprintf("%g keV", $nuclideData["GammaEnergies"][$i]));
+		$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
+		$table->setCellContents($counter,1, sprintf("%g",$nuclideData["GammaIntensities"][$i]));
+		$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+		$counter++;
+	}
+
+
+	$result=$table->toHtml();
+	foreach ($commands as $key => &$value) {
+		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".stringify($RadioNuclide, $key).")";
+	}
+	unset($value);
+	$unit="";
+	goto past_error;
+}
 //error handling
 error:
 if (isset($_GET['xrlFunction']) && $result == 0.0) {
@@ -1394,6 +1454,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetCompoundDataNISTList') { ?>selected="true" <?php }; ?>value="GetCompoundDataNISTList">List of NIST catalog compounds</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetCompoundDataNISTByName') { ?>selected="true" <?php }; ?>value="GetCompoundDataNISTByName">Get composition of NIST catalog compound</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetRadioNuclideDataList') { ?>selected="true" <?php }; ?>value="GetRadioNuclideDataList">List of X-ray emitting radionuclides</option>
+  <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'GetRadioNuclideDataByName') { ?>selected="true" <?php }; ?>value="GetRadioNuclideDataByName">Get excitation profile of X-ray emitting radionuclide</option>
   <option <?php if (isset($_GET['xrlFunction']) && $_GET['xrlFunction'] == 'CompoundParser') { ?>selected="true" <?php }; ?>value="CompoundParser">Compoundparser</option>
 </select>
 
@@ -1511,6 +1572,19 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
 		echo "selected=\"true\" ";
   	} 
 	echo ">$nistcompound</option>";
+  } 
+  ?>
+  </select>
+  </div>
+  <div id="radionuclide" style="<?php echo $RadioNuclideStyle;?>">
+  Radionuclide: <select name="RadioNuclide" id="RadioNuclide">
+  <?php
+  foreach ($RadioNuclideArray as $radionuclide) {
+  	echo "<option value=\"$radionuclide\"";
+	if ($radionuclide == $RadioNuclide) {
+		echo "selected=\"true\" ";
+  	} 
+	echo ">$radionuclide</option>";
   } 
   ?>
   </select>
@@ -1667,6 +1741,7 @@ function displayNoneAllFunction() {
 	document.getElementById("pz").style.display= "none";
 	document.getElementById("augertrans").style.display= "none";
 	document.getElementById("nistcompound").style.display= "none";
+	document.getElementById("radionuclide").style.display= "none";
 }
 
 function optionCheckLanguage(combo) {
@@ -1790,6 +1865,7 @@ function AugerTransbChanged(AugerTransb) {
 	AugerTransc.options[0].selected = true;
     }
 } 
+
 function optionCheckFunction(combo) {
     /*jslint browser:true */
     var selectedValue = combo.options[combo.selectedIndex].value;
@@ -1895,6 +1971,8 @@ function optionCheckFunction(combo) {
 	document.getElementById("compound").style.display= "block";
     } else if (selectedValue === "GetCompoundDataNISTByName") {
 	document.getElementById("nistcompound").style.display= "block";
+    } else if (selectedValue === "GetRadioNuclideDataByName") {
+	document.getElementById("radionuclide").style.display= "block";
     }
 }
 
