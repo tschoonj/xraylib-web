@@ -78,7 +78,7 @@ $DensityStyle="display:none";
 $PZStyle="display:none";
 $AugerTransStyle="display:none";
 $NISTcompoundStyle="display:none";
-$RadioNuclideStule="display:none";
+$RadioNuclideStyle="display:none";
 
 
 $Language="C";
