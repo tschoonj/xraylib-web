@@ -649,7 +649,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 			unset($value);
 		}
 		else {
-			$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell);
+			$result = $xrlFunction(SymbolToAtomicNumber($Element), $realShell, $Energy);
 			foreach ($commands as $key => &$value) {
 				$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".expand_entity("SymbolToAtomicNumber", XRL_FUNCTION, $key)."(".stringify($Element, $key)."), ".expand_entity($Shell, XRL_MACRO, $key).", ".$Energy.")";
 			}
