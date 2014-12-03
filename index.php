@@ -42,6 +42,8 @@ $NISTcompound="Gadolinium Oxysulfide";
 $RadioNuclide="55Fe";
 $result="";
 
+define("MAX_ENERGY", 300.0);
+
 $commands = array(
 	"C" => "",
 	"Fortran" => "",
@@ -390,7 +392,7 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "Refractive_Index")) {
 	$EnergyStyle="display:block";
 	$DensityStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -430,7 +432,7 @@ else if (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_FluorLine_Kissel_Ca
 	$ElementStyle="display:block";
 	$LinetypeStyle="display:block";
 	$EnergyStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 200.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -598,7 +600,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Photo_Partial"
 	$ElementStyle="display:block";
 	$EnergyStyle="display:block";
 	$ShellStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > 200.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -714,7 +716,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_Total" || $xrlFuncti
 	$EnergyStyle="display:block";
 	$codeExampleStyle="display:block";
 
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -759,7 +761,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "Fi" ||
 	$ElementStyle="display:block";
 	$EnergyStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -791,7 +793,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile")) {
 	$ElementStyle="display:block";
 	$PZStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($PZ) || $PZ < 0.0 || $Energy > 100.0) {
+	if (!is_numeric($PZ) || $PZ < 0.0) {
 		$result=0.0;
 		goto error;
 	}
@@ -821,7 +823,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial"
 	$PZStyle="display:block";
 	$ShellStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($PZ) || $PZ < 0.0 || $Energy > 100.0) {
+	if (!is_numeric($PZ) || $PZ < 0.0) {
 		$result=0.0;
 		goto error;
 	}
@@ -887,7 +889,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "ComptonProfile_Partial"
 	goto past_error;
 }
 elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "CS_KN")) {
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -929,7 +931,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_KN" ||
 	$EnergyStyle="display:block";
 	$ThetaStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -967,7 +969,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCS_Rayl" ||
 	$ThetaStyle="display:block";
 	$ElementOrCompoundStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -1043,7 +1045,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_KN")) {
 	$ThetaStyle="display:block";
 	$PhiStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
@@ -1078,7 +1080,7 @@ elseif (isset($_GET['xrlFunction']) && ($xrlFunction == "DCSP_Rayl" ||
 	$ElementOrCompoundStyle="display:block";
 	$PhiStyle="display:block";
 	$codeExampleStyle="display:block";
-	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy >= 100.0) {
+	if (!is_numeric($Energy) || $Energy <= 0.0 || $Energy > MAX_ENERGY) {
 		$result=0.0;
 		goto error;
 	}
