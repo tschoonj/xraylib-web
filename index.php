@@ -1269,6 +1269,7 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CompoundParser") {
 	//$table->setCellAttributes(1, 0, array('align' => 'left'));
 	$table->setHeaderContents(0, 0, "Element");
 	$table->setHeaderContents(0, 1, "Weight fraction");
+	$table->setHeaderContents(0, 2, "Number of atoms");
 	$counter=1;
 	for ($i = 0 ; $i < $compoundData["nElements"] ; $i++) {
 		//$result .= sprintf("    %s: %g %%<br/>", $compoundData["Elements"][$i], $compoundData["massFractions"][$i]);
@@ -1276,9 +1277,13 @@ elseif (isset($_GET['xrlFunction']) && $xrlFunction == "CompoundParser") {
 		$table->setCellAttributes($counter,0, array('class' => 'cellattr'));
 		$table->setCellContents($counter,1, sprintf("%g %%",$compoundData["massFractions"][$i]*100.0));
 		$table->setCellAttributes($counter,1, array('class' => 'cellattr'));
+		$table->setCellContents($counter,2, sprintf("%g",$compoundData["nAtoms"][$i]));
+		$table->setCellAttributes($counter,2, array('class' => 'cellattr'));
 		$counter++;
 	}
 	$result=$table->toHtml();
+	$result .= sprintf("<br/><strong>Molar mass:</strong> %g g/mol", $compoundData["molarMass"]);
+	$result .= sprintf("<br/><strong>Total number of atoms:</strong> %g", $compoundData["nAtomsAll"]);
 	foreach ($commands as $key => &$value) {
 		$value = expand_entity($xrlFunction, XRL_FUNCTION, $key)."(".stringify($Compound, $key).")";
 	}
@@ -1474,7 +1479,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
    Excited shell: <select name="AugerTransa" id="AugerTransa" onchange="AugerTransaChanged(this)">
 	<?php 
 		foreach (array_slice($shellsArray, 0, 8) as $shell) {
-			echo "<option value=\"$shell\"";
+			echo "<option value=\"$shell\" ";
 			if ($AugerTransa == $shell) {
 				echo "selected=\"true\" ";
 			}
@@ -1488,7 +1493,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
 		$slice = array_slice($shellsArray, $res+1,9-$res-1);
 		$i = 0;
 		foreach ($slice as $shell) {
-			echo "<option value=\"$shell\"";
+			echo "<option value=\"$shell\" ";
 			if (($i++ == 0 && array_search($AugerTransb, $slice) === FALSE) || $AugerTransb == $shell) {
 				echo "selected=\"true\" ";
 			}
@@ -1502,7 +1507,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
 		$slice = array_slice($shellsArray, $res);
 		$i = 0;
 		foreach ($slice as $shell) {
-			echo "<option value=\"$shell\"";
+			echo "<option value=\"$shell\" ";
 			if (($i++ == 0 && array_search($AugerTransc, $slice) === FALSE) || $AugerTransc == $shell) {
 				echo "selected=\"true\" ";
 			}
@@ -1522,7 +1527,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
    <select name="Linename1a" id="Linename1a" onchange="Linename1aChanged(this)">
 	<?php 
 		foreach (array_slice($shellsArray, 0, -1) as $shell) {
-			echo "<option value=\"$shell\"";
+			echo "<option value=\"$shell\" ";
 			if ($Linename1a == $shell) {
 				echo "selected=\"true\" ";
 			}
@@ -1535,7 +1540,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
 		$slice = array_slice($shellsArray, $res+1);
 		$i = 0;
 		foreach ($slice as $shell) {
-			echo "<option value=\"$shell\"";
+			echo "<option value=\"$shell\" ";
 			if (($i++ == 0 && array_search($Linename1b, $slice) === FALSE) || $Linename1b == $shell) {
 				echo "selected=\"true\" ";
 			}
@@ -1550,7 +1555,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
    	<?php
 		foreach($siegbahnArray as $siegbahn) {
 			$siegbahnFull = $siegbahn."_LINE";
-			echo "<option value=\"$siegbahnFull\"";
+			echo "<option value=\"$siegbahnFull\" ";
 			if ($Linename2 == $siegbahnFull) {
 				echo "selected=\"true\" ";
 			}
@@ -1569,7 +1574,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   NIST compound: <select name="NISTcompound" id="NISTcompound">
   <?php
   foreach ($NISTcompoundArray as $nistcompound) {
-  	echo "<option value=\"$nistcompound\"";
+  	echo "<option value=\"$nistcompound\" ";
 	if ($nistcompound == $NISTcompound) {
 		echo "selected=\"true\" ";
   	} 
@@ -1582,7 +1587,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   Radionuclide: <select name="RadioNuclide" id="RadioNuclide">
   <?php
   foreach ($RadioNuclideArray as $radionuclide) {
-  	echo "<option value=\"$radionuclide\"";
+  	echo "<option value=\"$radionuclide\" ";
 	if ($radionuclide == $RadioNuclide) {
 		echo "selected=\"true\" ";
   	} 
@@ -1601,7 +1606,7 @@ Function: <select onchange="optionCheckFunction(this)" name="xrlFunction" id="xr
   echo ">All shells</option>";
   foreach ($shellsArray as $shell) {
   		$shellFull = $shell."_SHELL";
-  		echo "<option value=\"$shellFull\"";
+  		echo "<option value=\"$shellFull\" ";
 		if ($Shell == $shellFull) {
 				echo "selected=\"true\" ";
 		}
@@ -1656,7 +1661,7 @@ echo "<h2>Result</h2>";
 echo "<p style=\"font-size:20px\">";
 echo $result,$unit;
 ?>
-<p/>
+</p>
 <br/><br/>
 <div id="codeExample" style=<?php echo $codeExampleStyle;?>>
 <p>
