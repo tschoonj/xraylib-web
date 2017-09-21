@@ -29,7 +29,7 @@ function expand_entity($entity, $type, $lang) {
 			$rv = "xraylib.".$entity;
 			break;
 		case "Java":
-			$rv = "xraylib.".$entity;
+			$rv = "Xraylib.".$entity;
 			break;
 		case "Csharp":
 			$rv = "XrayLib.".$entity;
@@ -73,9 +73,7 @@ function xraylib_enable($lang) {
 		$rv = "import xraylib";
 	}
 	elseif ($lang == "Java"){
-		$rv = "static {
-	System.loadLibrary(\"xraylib\");
-}";
+		$rv = "import com.github.tschoonj.xraylib.*;";
 	}
 	elseif ($lang == "Csharp"){
 		$rv = "using Science;";
